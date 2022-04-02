@@ -10,24 +10,26 @@ import BaseDto from '../domain/dto/BaseDto';
 import CardPosition from '../domain/CardPosition';
 
 export default class GameService {
-    private readonly _game: Game;
-    private readonly _deck: Deck;
+    private _game: Game|null = null;
+
+    public get game(): Game {
+        if (this._game === null) {
+            throw new Error('Game is not initialized');
+        }
+
+        return this._game;
+    }
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
 
-    constructor() {
+    public start(deck: Deck): void {
         this._game = new Game();
-        this._deck = Deck.getShortDeckInReverseOrder();
         this.initEvents();
-    }
-
-    public start(): void {
-        this._deck.shuffle();
-        this._game.start(this._deck.cards);
+        this.game.start(deck.cards);
     }
 
     public getCardsDisposition(): CardsDispositionDto {
-        return this._game.getCardsDisposition();
+        return this.game.getCardsDisposition();
     }
 
     public canMoveCard(card: CardDto): boolean {
@@ -62,10 +64,10 @@ export default class GameService {
                 return false;
             }
 
-            return this._game.canMoveCardToBase(sourceCardPosition.positionIndex);
+            return this.game.canMoveCardToBase(sourceCardPosition.positionIndex);
         }
 
-        return this._game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
+        return this.game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
     }
 
     public moveCardToCard(sourceCard: CardDto, targetCard: CardDto) {
@@ -77,14 +79,14 @@ export default class GameService {
         const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
 
         if (targetCardPosition.position === CardPositionType.Base) {
-            this._game.moveCardToBase(sourceCardPosition.positionIndex);
+            this.game.moveCardToBase(sourceCardPosition.positionIndex);
         } else {
-            this._game.moveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
+            this.game.moveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
         }
     }
 
     public moveCardToEmptyRow(cardDto: CardDto, rowNumber: number): void {
-        this._game.moveCardToRow(this.getCardPosition(cardDto).positionIndex, rowNumber);
+        this.game.moveCardToRow(this.getCardPosition(cardDto).positionIndex, rowNumber);
     }
 
     public canMoveCardToEmptyRow(cardDto: CardDto, rowNumber: number): boolean {
@@ -122,16 +124,16 @@ export default class GameService {
     }
 
     private initEvents(): void {
-        this._game.onCardMoved.subscribe((e: CardMovedEvent): void => {
+        this.game.onCardMoved.subscribe((e: CardMovedEvent): void => {
             this.onCardMoved.trigger(e);
         });
     }
 
     public canMoveCardToBase(card: CardDto): boolean {
-        return this._game.canMoveCardToBase(this.getCardPosition(card).positionIndex);
+        return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex);
     }
 
     public moveCardToBase(card: CardDto): void {
-        this._game.moveCardToBase(this.getCardPosition(card).positionIndex);
+        this.game.moveCardToBase(this.getCardPosition(card).positionIndex);
     }
 }

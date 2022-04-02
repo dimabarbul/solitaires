@@ -1,0 +1,15 @@
+﻿@import './_variables';
+
+.base {
+  position: absolute;
+  width: $cards-width;
+  height: $cards-height;
+  left: $base-left;
+  background-color: palegreen;
+}
+
+@for $i from 0 through 3 {
+  .base-#{$i} {
+    top: $top + $i * ($cards-height + $cards-margin);
+  }
+}

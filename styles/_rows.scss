@@ -1,0 +1,18 @@
+﻿@import './_variables';
+
+$left-row-left: $base-left - $cards-margin - $cards-width;
+$right-row-left: $base-left + $cards-margin + $cards-width;
+
+.card-row {
+  position: absolute;
+  width: $cards-width;
+  height: $cards-height;
+  background-color: palegreen;
+}
+
+@for $i from 0 through 7 {
+  .card-row-#{$i} {
+    left: if($i < 4, $left-row-left, $right-row-left);
+    top: $top + ($i % 4) * ($cards-height + $cards-margin);
+  }
+}

@@ -1,13 +1,13 @@
 ﻿import Card from './Card';
-import CardValue, { getShortDeckDifference } from './CardValue';
-import CardsDispositionDto from './dto/CardsDispositionDto';
-import BaseDto from './dto/BaseDto';
-import RowDto from './dto/RowDto';
 import CardDto from './dto/CardDto';
-import EventHandler from './EventHandler';
-import CardPosition from './CardPosition';
+import RowDto from './dto/RowDto';
 import CardPositionType from './CardPositionType';
 import CardMovedEvent from './events/CardMovedEvent';
+import CardsDispositionDto from './dto/CardsDispositionDto';
+import BaseDto from './dto/BaseDto';
+import CardPosition from './CardPosition';
+import CardValue, { getShortDeckDifference } from './CardValue';
+import EventHandler from '../core/EventHandler';
 
 export default class Game {
     private readonly _bases: Card[][] = new Array(4);

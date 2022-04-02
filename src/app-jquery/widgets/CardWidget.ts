@@ -1,17 +1,18 @@
-﻿import CardDto from '../../core/dto/CardDto';
-import { valueToString } from '../../core/CardValue';
-import { suitToString } from '../../core/CardSuit';
+﻿import GameService from '../../application/GameService';
+import CardDto from '../../domain/dto/CardDto';
+import { valueToString } from '../../domain/CardValue';
+import { suitToString } from '../../domain/CardSuit';
 import * as $ from 'jquery';
 import 'jqueryui';
-import GameService from '../GameService';
 
-export default class Card {
+export default class CardWidget {
     constructor(
         private readonly _gameService: GameService,
         private readonly _element: HTMLDivElement,
         private readonly _card: CardDto
     ) {
         this.initElement();
+        this.initEvents();
         this.initDragAndDrop();
     }
 
@@ -96,6 +97,14 @@ export default class Card {
 
             this._gameService.moveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card);
             event.stopPropagation();
+        });
+    }
+
+    private initEvents(): void {
+        this._element.addEventListener('dblclick', (event: Event): void => {
+            if (this._gameService.canMoveCardToBase(this._card)) {
+                this._gameService.moveCardToBase(this._card);
+            }
         });
     }
 }

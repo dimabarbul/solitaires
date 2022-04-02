@@ -1,6 +1,6 @@
-﻿import Card from './Card';
-import Point from '../Point';
-import GameService from '../GameService';
+﻿import GameService from '../../application/GameService';
+import Point from '../../application/Point';
+import CardWidget from './CardWidget';
 
 export enum CardStackDirection {
     None,
@@ -10,7 +10,7 @@ export enum CardStackDirection {
     Bottom,
 }
 
-export default class CardStack {
+export default class CardStackWidget {
     private static readonly XDelta = 25;
     private static readonly YDelta = 25;
     private static readonly BaseZLevel = 0;
@@ -20,19 +20,19 @@ export default class CardStack {
         protected readonly _element: HTMLDivElement,
         protected readonly _index: number,
         protected readonly _direction: CardStackDirection,
-        protected readonly _cards: Card[]
+        protected readonly _cards: CardWidget[]
     ) {
         this.initElement();
         this.refreshCards();
     }
 
-    public pushCard(card: Card): void {
+    public pushCard(card: CardWidget): void {
         this._cards.push(card);
         this.refreshCards();
     }
 
-    public popCard(): Card {
-        const card: Card = this._cards.pop()
+    public popCard(): CardWidget {
+        const card: CardWidget = this._cards.pop()
             || (() => { throw new Error('No cards to pop'); })();
 
         this.refreshCards();
@@ -46,7 +46,7 @@ export default class CardStack {
 
     protected initElement(): void {
         this._element.className = this.getElementClassName();
-        this._element.style.zIndex = CardStack.BaseZLevel.toString();
+        this._element.style.zIndex = CardStackWidget.BaseZLevel.toString();
     }
 
     protected refreshCards(): void {
@@ -56,7 +56,7 @@ export default class CardStack {
             card.move(
                 topLeftCorner.x + i * this.getXDelta(),
                 topLeftCorner.y + i * this.getYDelta());
-            card.bringToFront(i + 1 + CardStack.BaseZLevel);
+            card.bringToFront(i + 1 + CardStackWidget.BaseZLevel);
             this.updateDraggableState(card, i);
         }
     }
@@ -70,9 +70,9 @@ export default class CardStack {
     private getXDelta(): number {
         switch (this._direction) {
             case CardStackDirection.Left:
-                return -CardStack.XDelta;
+                return -CardStackWidget.XDelta;
             case CardStackDirection.Right:
-                return CardStack.XDelta;
+                return CardStackWidget.XDelta;
             case CardStackDirection.None:
             case CardStackDirection.Top:
             case CardStackDirection.Bottom:
@@ -89,15 +89,15 @@ export default class CardStack {
             case CardStackDirection.Right:
                 return 0;
             case CardStackDirection.Top:
-                return CardStack.YDelta;
+                return CardStackWidget.YDelta;
             case CardStackDirection.Bottom:
-                return -CardStack.YDelta;
+                return -CardStackWidget.YDelta;
         }
 
         throw new Error(`Unexpected direction ${this._direction}`);
     }
 
-    private updateDraggableState(card: Card, index: number): void {
+    private updateDraggableState(card: CardWidget, index: number): void {
         if (index === this._cards.length - 1) {
             card.enableDragAndDrop();
         } else {

@@ -1,6 +1,6 @@
 ﻿import CardPosition from '../CardPosition';
-import Event from '../Event';
 import CardDto from '../dto/CardDto';
+import Event from '../../core/Event';
 
 export default class CardMovedEvent implements Event {
     constructor(

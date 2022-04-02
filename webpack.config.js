@@ -3,7 +3,7 @@
 module.exports = {
     mode: 'development',
     entry: {
-        'index.js': './src/index.ts',
+        'app-jquery.js': './src/app-jquery/index.ts',
         'styles.js': './styles/index.scss',
         // 'vendor.js': [
         //     // path.resolve(__dirname, 'node_modules', 'bootstrap', 'dist', 'js', 'bootstrap.js'),

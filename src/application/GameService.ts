@@ -1,13 +1,13 @@
-﻿import Game from '../core/Game';
-import Deck from '../core/Deck';
-import CardsDispositionDto from '../core/dto/CardsDispositionDto';
-import CardDto from '../core/dto/CardDto';
-import RowDto from '../core/dto/RowDto';
-import BaseDto from '../core/dto/BaseDto';
-import CardPosition from '../core/CardPosition';
-import CardPositionType from '../core/CardPositionType';
+﻿import Game from '../domain/Game';
+import Deck from '../domain/Deck';
 import EventHandler from '../core/EventHandler';
-import CardMovedEvent from '../core/events/CardMovedEvent';
+import CardMovedEvent from '../domain/events/CardMovedEvent';
+import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
+import CardDto from '../domain/dto/CardDto';
+import RowDto from '../domain/dto/RowDto';
+import CardPositionType from '../domain/CardPositionType';
+import BaseDto from '../domain/dto/BaseDto';
+import CardPosition from '../domain/CardPosition';
 
 export default class GameService {
     private readonly _game: Game;
@@ -20,10 +20,6 @@ export default class GameService {
         this._deck = Deck.getShortDeckInReverseOrder();
         this.initEvents();
     }
-
-    // public get cardsCount(): number {
-    //     return this._deck.cards.length;
-    // }
 
     public start(): void {
         this._deck.shuffle();
@@ -129,5 +125,13 @@ export default class GameService {
         this._game.onCardMoved.subscribe((e: CardMovedEvent): void => {
             this.onCardMoved.trigger(e);
         });
+    }
+
+    public canMoveCardToBase(card: CardDto): boolean {
+        return this._game.canMoveCardToBase(this.getCardPosition(card).positionIndex);
+    }
+
+    public moveCardToBase(card: CardDto): void {
+        this._game.moveCardToBase(this.getCardPosition(card).positionIndex);
     }
 }

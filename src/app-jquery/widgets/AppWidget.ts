@@ -1,25 +1,23 @@
-﻿import CardDto from '../../core/dto/CardDto';
-import CardsDispositionDto from '../../core/dto/CardsDispositionDto';
-import Card from './Card';
-import Base from './Base';
-import Row from './Row';
-import GameService from '../GameService';
-import CardPositionType from '../../core/CardPositionType';
-import CardMovedEvent from '../../core/events/CardMovedEvent';
+﻿import RowWidget from './RowWidget';
+import BaseWidget from './BaseWidget';
+import CardDto from '../../domain/dto/CardDto';
+import GameService from '../../application/GameService';
+import CardPositionType from '../../domain/CardPositionType';
+import CardMovedEvent from '../../domain/events/CardMovedEvent';
+import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
+import CardWidget from './CardWidget';
 
-export default class App {
+export default class AppWidget {
     private readonly _root: HTMLElement;
-    // private readonly _cardsCount: number;
-    private readonly _bases: Base[] = new Array(4);
-    private readonly _rows: Row[] = new Array(8);
+    private readonly _bases: BaseWidget[] = new Array(4);
+    private readonly _rows: RowWidget[] = new Array(8);
 
-    constructor(private readonly _gameService: GameService, rootElementId: string/*, cardsCount: number*/) {
+    constructor(private readonly _gameService: GameService, rootElementId: string) {
         this._root = document.getElementById(rootElementId)
             || (() => {
                 throw new Error(`Element with id ${rootElementId} not found`);
             })();
         this.initEvents();
-        // this._cardsCount = cardsCount;
     }
 
     public createLayout(cardsDisposition: CardsDispositionDto): void {
@@ -31,27 +29,27 @@ export default class App {
             const cardStackElement: HTMLDivElement = document.createElement('div');
             this._root.appendChild(cardStackElement);
 
-            const cardWidgets: Card[] = this.createCards(cardsDisposition.bases[i].cards);
+            const cardWidgets: CardWidget[] = this.createCards(cardsDisposition.bases[i].cards);
 
-            this._bases[i] = new Base(this._gameService, cardStackElement, i, cardWidgets);
+            this._bases[i] = new BaseWidget(this._gameService, cardStackElement, i, cardWidgets);
         }
 
         for (let i = 0; i < cardsDisposition.rows.length; i++) {
             const cardStackElement: HTMLDivElement = document.createElement('div');
             this._root.appendChild(cardStackElement);
 
-            const cardWidgets: Card[] = this.createCards(cardsDisposition.rows[i].cards);
+            const cardWidgets: CardWidget[] = this.createCards(cardsDisposition.rows[i].cards);
 
-            this._rows[i] = new Row(this._gameService, cardStackElement, i, cardWidgets);
+            this._rows[i] = new RowWidget(this._gameService, cardStackElement, i, cardWidgets);
         }
     }
 
-    private createCards(cards: CardDto[]): Card[] {
-        const cardWidgets: Card[] = new Array(cards.length);
+    private createCards(cards: CardDto[]): CardWidget[] {
+        const cardWidgets: CardWidget[] = new Array(cards.length);
         for (let i = 0; i < cards.length; i++) {
             const cardElement: HTMLDivElement = document.createElement('div');
             this._root.appendChild(cardElement);
-            cardWidgets[i] = new Card(this._gameService, cardElement, cards[i]);
+            cardWidgets[i] = new CardWidget(this._gameService, cardElement, cards[i]);
         }
 
         return cardWidgets;

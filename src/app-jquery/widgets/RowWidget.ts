@@ -1,11 +1,12 @@
-﻿import CardStack, { CardStackDirection } from './CardStack';
-import Card from './Card';
-import GameService from '../GameService';
+﻿import CardDto from '../../domain/dto/CardDto';
+import GameService from '../../application/GameService';
+import CardStackWidget, { CardStackDirection } from './CardStackWidget';
+import CardWidget from './CardWidget';
 import * as $ from 'jquery';
-import CardDto from '../../core/dto/CardDto';
+import 'jqueryui';
 
-export default class Row extends CardStack {
-    constructor(gameService: GameService, element: HTMLDivElement, index: number, cards: Card[]) {
+export default class RowWidget extends CardStackWidget {
+    constructor(gameService: GameService, element: HTMLDivElement, index: number, cards: CardWidget[]) {
         super(gameService, element, index, index < 4 ? CardStackDirection.Left : CardStackDirection.Right, cards);
     }
 

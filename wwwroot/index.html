@@ -3,16 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Besieged Fortress</title>
+
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            height: 100%;
+        }
+        .menu {
+            width: 50px;
+            vertical-align: top;
+        }
+        .content {
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container-fluid">
-        <div id="app"></div>
-    </div>
-
-<!--    <script src="dist/vendor.js"></script>-->
-    <script src="dist/styles.js"></script>
-    <script src="dist/index.js"></script>
+<table border-collapse="collapse">
+    <tbody>
+    <tr>
+        <td class="menu">
+            <ul>
+                <li><a href="app-jquery.html" target="main">jQuery</a></li>
+            </ul>
+        </td>
+        <td class="content">
+            <iframe name="main"></iframe>
+        </td>
+    </tr>
+    </tbody>
+</table>>
 
 </body>
 </html>

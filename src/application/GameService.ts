@@ -64,7 +64,7 @@ export default class GameService {
                 return false;
             }
 
-            return this.game.canMoveCardToBase(sourceCardPosition.positionIndex);
+            return this.game.canMoveCardToAnyBase(sourceCardPosition.positionIndex);
         }
 
         return this.game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
@@ -129,8 +129,12 @@ export default class GameService {
         });
     }
 
-    public canMoveCardToBase(card: CardDto): boolean {
-        return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex);
+    public canMoveCardToBase(card: CardDto, baseIndex: number|null = null): boolean {
+        if (baseIndex !== null) {
+            return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex, baseIndex);
+        }
+
+        return this.game.canMoveCardToAnyBase(this.getCardPosition(card).positionIndex);
     }
 
     public moveCardToBase(card: CardDto): void {

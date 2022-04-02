@@ -36,16 +36,6 @@ export default class RowWidget extends CardStackWidget {
         $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
             const droppedCard: CardDto = CardDto.fromString(ui.draggable.data('card'));
 
-            // console.log('drop on row', this._cards.length > 0 ? this._cards[0].card.toString() : '', droppedCard.toString());
-            // if (this._cards.some((card: Card): boolean => card.card.toString() === droppedCard.toString())) {
-            //     ui.draggable.animate({
-            //         left: ui.draggable.data('originalLeft'),
-            //         top: ui.draggable.data('originalTop'),
-            //     });
-            //
-            //     return;
-            // }
-
             if (this._cards.length > 0) {
                 return;
             }

@@ -97,7 +97,7 @@ export default class CardStackWidget {
         throw new Error(`Unexpected direction ${this._direction}`);
     }
 
-    private updateDraggableState(card: CardWidget, index: number): void {
+    protected updateDraggableState(card: CardWidget, index: number): void {
         if (index === this._cards.length - 1) {
             card.enableDragAndDrop();
         } else {

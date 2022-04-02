@@ -1,14 +1,41 @@
 ﻿import GameService from '../../application/GameService';
 import CardStackWidget, { CardStackDirection } from './CardStackWidget';
 import CardWidget from './CardWidget';
+import * as $ from 'jquery';
+import CardDto from '../../domain/dto/CardDto';
 
 export default class BaseWidget extends CardStackWidget {
 
     constructor(gameService: GameService, element: HTMLDivElement, index: number, cards: CardWidget[]) {
         super(gameService, element, index, CardStackDirection.None, cards);
+
+        this.makeDroppable();
     }
 
     protected getElementClassName(): string {
         return `base base-${this._index}`;
+    }
+
+    protected updateDraggableState(card: CardWidget, index: number) {
+        card.disableDragAndDrop();
+    }
+
+    private makeDroppable(): void {
+        const $element = $(this._element);
+        $element.droppable();
+        $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
+            const droppedCard: CardDto = CardDto.fromString(ui.draggable.data('card'));
+
+            if (!this._gameService.canMoveCardToBase(droppedCard, this._index)) {
+                ui.draggable.animate({
+                    left: ui.draggable.data('originalLeft'),
+                    top: ui.draggable.data('originalTop'),
+                });
+
+                return;
+            }
+
+            this._gameService.moveCardToBase(droppedCard);
+        });
     }
 }

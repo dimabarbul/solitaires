@@ -24,16 +24,26 @@ export default class Game {
         this.initRows(cards);
     }
 
-    public canMoveCardToBase(fromRowNumber: number): boolean {
+    public canMoveCardToAnyBase(fromRowNumber: number): boolean {
         if (this._rows[fromRowNumber].length === 0) {
             return false;
         }
 
-        const rowCard = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const baseIndex: number = this.getBaseIndex(rowCard);
-        const baseCard: Card = this._bases[baseIndex][this._bases[baseIndex].length - 1];
+        const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
 
-        return getShortDeckDifference(rowCard.value, baseCard.value) === 1;
+        return this.canMoveCardToBase(fromRowNumber, this.getBaseNumber(rowCard));
+    }
+
+    public canMoveCardToBase(fromRowNumber: number, toBaseNumber: number): boolean {
+        if (this._rows[fromRowNumber].length === 0) {
+            return false;
+        }
+
+        const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
+        const baseCard: Card = this._bases[toBaseNumber][this._bases[toBaseNumber].length - 1];
+
+        return rowCard.suit === baseCard.suit
+            && getShortDeckDifference(rowCard.value, baseCard.value) === 1;
     }
 
     public canMoveCardToRow(fromRowNumber: number, toRowNumber: number): boolean {
@@ -52,12 +62,12 @@ export default class Game {
     }
 
     public moveCardToBase(fromRowNumber: number): void {
-        if (!this.canMoveCardToBase(fromRowNumber)) {
+        if (!this.canMoveCardToAnyBase(fromRowNumber)) {
             throw new Error(`Cannot move card to base: ${fromRowNumber}`);
         }
 
         const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const baseIndex: number = this.getBaseIndex(rowCard);
+        const baseIndex: number = this.getBaseNumber(rowCard);
 
         this._bases[baseIndex].push(rowCard);
         this._rows[fromRowNumber].pop();
@@ -113,7 +123,7 @@ export default class Game {
         return new CardsDispositionDto(bases, rows);
     }
 
-    private getBaseIndex(card: Card): number {
+    private getBaseNumber(card: Card): number {
         for (let i = 0; i < this._bases.length; i++) {
             if (this._bases[i][0].suit === card.suit) {
                 return i;

@@ -60,6 +60,7 @@ export default class CardWidget {
         const $element = $(this._element);
         $element.draggable({
             revert: (dropped: boolean): boolean => !dropped,
+            revertDuration: 0,
             disabled: true,
             stack: '.playing-card',
             // start: (event, ui) => {

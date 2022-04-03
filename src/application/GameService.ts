@@ -8,10 +8,12 @@ import CardPositionType from '../domain/CardPositionType';
 import BaseDto from '../domain/dto/BaseDto';
 import CardPosition from '../domain/CardPosition';
 import Card from '../domain/Card';
-import GameFinishedEvent from '../domain/events/GameFinishedEvent';
+import History from './History';
+import ICommand from '../core/ICommand';
 
 export default class GameService {
     private _game: Game|null = null;
+    private readonly _history: History = new History();
 
     public get game(): Game {
         if (this._game === null) {
@@ -22,10 +24,12 @@ export default class GameService {
     }
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
-    public readonly onGameFinished: EventHandler<GameFinishedEvent> = new EventHandler<GameFinishedEvent>();
+    public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
+    public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
     public start(cards: Card[]): void {
         this._game = new Game();
+        this._history.clear();
         this.initEvents();
         this.game.start(cards);
     }
@@ -72,6 +76,18 @@ export default class GameService {
         return this.game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
     }
 
+    public canMoveCardToEmptyRow(cardDto: CardDto, rowNumber: number): boolean {
+        return this.getCardPosition(cardDto).positionIndex !== rowNumber;
+    }
+
+    public canMoveCardToBase(card: CardDto, baseIndex: number|null = null): boolean {
+        if (baseIndex !== null) {
+            return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex, baseIndex);
+        }
+
+        return this.game.canMoveCardToAnyBase(this.getCardPosition(card).positionIndex);
+    }
+
     public moveCardToCard(sourceCard: CardDto, targetCard: CardDto) {
         if (!this.canMoveCardToCard(sourceCard, targetCard)) {
             throw new Error(`Cannot move card to card: ${sourceCard.toString()} => ${targetCard.toString()}`);
@@ -80,19 +96,50 @@ export default class GameService {
         const sourceCardPosition: CardPosition = this.getCardPosition(sourceCard);
         const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
 
+        let command: ICommand;
         if (targetCardPosition.position === CardPositionType.Base) {
-            this.game.moveCardToBase(sourceCardPosition.positionIndex);
+            command = this.game.moveCardToBase(sourceCardPosition.positionIndex);
         } else {
-            this.game.moveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
+            command = this.game.moveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
         }
+
+        this._history.pushCommand(command);
     }
 
     public moveCardToEmptyRow(cardDto: CardDto, rowNumber: number): void {
-        this.game.moveCardToRow(this.getCardPosition(cardDto).positionIndex, rowNumber);
+        const command: ICommand = this.game.moveCardToRow(this.getCardPosition(cardDto).positionIndex, rowNumber);
+        this._history.pushCommand(command);
     }
 
-    public canMoveCardToEmptyRow(cardDto: CardDto, rowNumber: number): boolean {
-        return this.getCardPosition(cardDto).positionIndex !== rowNumber;
+    public moveCardToBase(card: CardDto): void {
+        const command: ICommand = this.game.moveCardToBase(this.getCardPosition(card).positionIndex);
+        this._history.pushCommand(command);
+    }
+
+    public undo(): void {
+        if (!this.canUndo()) {
+            throw new Error('Cannot undo');
+        }
+
+        const command: ICommand = this._history.moveBack();
+        command.undo();
+    }
+
+    public redo(): void {
+        if (!this.canRedo()) {
+            throw new Error('Cannot redo');
+        }
+
+        const command: ICommand = this._history.moveForward();
+        command.execute();
+    }
+
+    public canUndo(): boolean {
+        return this._history.canMoveBack();
+    }
+
+    public canRedo(): boolean {
+        return this._history.canMoveForward();
     }
 
     private getCardPosition(card: CardDto): CardPosition {
@@ -128,17 +175,6 @@ export default class GameService {
     private initEvents(): void {
         this.game.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
         this.game.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
-    }
-
-    public canMoveCardToBase(card: CardDto, baseIndex: number|null = null): boolean {
-        if (baseIndex !== null) {
-            return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex, baseIndex);
-        }
-
-        return this.game.canMoveCardToAnyBase(this.getCardPosition(card).positionIndex);
-    }
-
-    public moveCardToBase(card: CardDto): void {
-        this.game.moveCardToBase(this.getCardPosition(card).positionIndex);
+        this._history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
     }
 }

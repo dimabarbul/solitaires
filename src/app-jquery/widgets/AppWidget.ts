@@ -21,6 +21,7 @@ export default class AppWidget {
     }
 
     public createLayout(): void {
+        this.createUndoRedoButtons();
         this.createStacks(this._gameService.getCardsDisposition());
     }
 
@@ -55,9 +56,34 @@ export default class AppWidget {
         return cardWidgets;
     }
 
+    private createUndoRedoButtons(): void {
+        const undoButton = document.createElement('button');
+        undoButton.disabled = true;
+        undoButton.className = 'undo';
+        this._root.appendChild(undoButton);
+
+        const redoButton = document.createElement('button');
+        redoButton.disabled = true;
+        redoButton.className = 'redo';
+        this._root.appendChild(redoButton);
+
+        undoButton.addEventListener('click', () => {
+            this._gameService.undo();
+        });
+        redoButton.addEventListener('click', () => {
+            this._gameService.redo();
+        });
+        this._gameService.onHistoryChanged.subscribe(_ => {
+            undoButton.disabled = !this._gameService.canUndo();
+            redoButton.disabled = !this._gameService.canRedo();
+        });
+    }
+
     private initEvents(): void {
         this._gameService.onCardMoved.subscribe((e: CardMovedEvent): void => {
-            const cardWidget = this._rows[e.from.positionIndex].popCard();
+            const cardWidget = e.from.position === CardPositionType.Row ?
+                this._rows[e.from.positionIndex].popCard() :
+                this._bases[e.from.positionIndex].popCard();
 
             if (e.to.position === CardPositionType.Base) {
                 this._bases[e.to.positionIndex].pushCard(cardWidget);

@@ -8,14 +8,15 @@ import BaseDto from './dto/BaseDto';
 import CardPosition from './CardPosition';
 import CardValue, { getShortDeckDifference } from './CardValue';
 import EventHandler from '../core/EventHandler';
-import GameFinishedEvent from './events/GameFinishedEvent';
+import ICommand from '../core/ICommand';
+import MoveCardCommand from './commands/MoveCardCommand';
 
 export default class Game {
     private readonly _bases: Card[][] = new Array(4);
     private readonly _rows: Card[][] = new Array(8);
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
-    public readonly onGameFinished: EventHandler<GameFinishedEvent> = new EventHandler<GameFinishedEvent>();
+    public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
 
     public start(cards: Card[]): void {
         if (cards.length !== 36) {
@@ -64,37 +65,37 @@ export default class Game {
         return getShortDeckDifference(sourceCard.value, targetCard.value) === -1;
     }
 
-    public moveCardToBase(fromRowNumber: number): void {
+    public moveCardToBase(fromRowNumber: number): ICommand {
         if (!this.canMoveCardToAnyBase(fromRowNumber)) {
             throw new Error(`Cannot move card to base: ${fromRowNumber}`);
         }
 
         const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const baseIndex: number = this.getBaseNumber(rowCard);
+        const baseNumber: number = this.getBaseNumber(rowCard);
 
-        this._bases[baseIndex].push(rowCard);
-        this._rows[fromRowNumber].pop();
+        const command: MoveCardCommand = new MoveCardCommand(
+            this.moveCardFromRowToBase.bind(this, fromRowNumber, baseNumber),
+            this.moveCardFromBaseToRow.bind(this, baseNumber, fromRowNumber),
+        );
 
-        this.onCardMoved.trigger(new CardMovedEvent(
-            CardDto.fromCard(rowCard),
-            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
-            new CardPosition(CardPositionType.Base, baseIndex, this._bases[baseIndex].length - 1)));
+        command.execute();
+
+        return command;
     }
 
-    public moveCardToRow(fromRowNumber: number, toRowNumber: number): void {
+    public moveCardToRow(fromRowNumber: number, toRowNumber: number): ICommand {
         if (!this.canMoveCardToRow(fromRowNumber, toRowNumber)) {
             throw new Error(`Cannot move card to row: ${fromRowNumber} => ${toRowNumber}`);
         }
 
-        const sourceCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
+        const command: MoveCardCommand = new MoveCardCommand(
+            this.moveCardFromRowToRow.bind(this, fromRowNumber, toRowNumber),
+            this.moveCardFromRowToRow.bind(this, toRowNumber, fromRowNumber),
+        );
 
-        this._rows[toRowNumber].push(sourceCard);
-        this._rows[fromRowNumber].pop();
+        command.execute();
 
-        this.onCardMoved.trigger(new CardMovedEvent(
-            CardDto.fromCard(sourceCard),
-            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
-            new CardPosition(CardPositionType.Row, toRowNumber, this._rows[toRowNumber].length - 1)));
+        return command;
     }
 
     public isGameFinished(): boolean {
@@ -166,7 +167,41 @@ export default class Game {
 
     private checkIfGameIsFinished(): void {
         if (this.isGameFinished()) {
-            this.onGameFinished.trigger(new GameFinishedEvent());
+            this.onGameFinished.trigger();
         }
+    }
+
+    private moveCardFromRowToRow(fromRowNumber: number, toRowNumber: number): void {
+        const sourceCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
+
+        this._rows[toRowNumber].push(sourceCard);
+        this._rows[fromRowNumber].pop();
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(sourceCard),
+            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
+            new CardPosition(CardPositionType.Row, toRowNumber, this._rows[toRowNumber].length - 1)));
+    }
+
+    private moveCardFromRowToBase(fromRowNumber: number, toBaseNumber: number): void {
+        const card: Card = this._rows[fromRowNumber].pop()
+            || (() => { throw new Error(`Cannot move card from row ${fromRowNumber} to base ${toBaseNumber}: no card in the row.`) })();
+        this._bases[toBaseNumber].push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
+            new CardPosition(CardPositionType.Base, toBaseNumber, this._bases[toBaseNumber].length - 1)));
+    }
+
+    private moveCardFromBaseToRow(fromBaseNumber: number, toRowNumber: number): void {
+        const card: Card = this._bases[fromBaseNumber].pop()
+            || (() => { throw new Error(`Cannot move card from base ${fromBaseNumber} to row ${toRowNumber}: no card in the base.`) })();
+        this._rows[toRowNumber].push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            new CardPosition(CardPositionType.Base, fromBaseNumber, this._bases[fromBaseNumber].length),
+            new CardPosition(CardPositionType.Row, toRowNumber, this._rows[toRowNumber].length - 1)));
     }
 }

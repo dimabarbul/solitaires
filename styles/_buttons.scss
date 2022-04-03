@@ -1,0 +1,27 @@
+﻿@import './variables';
+
+.undo,
+.redo {
+  position: absolute;
+  top: 0;
+  width: $undo-redo-size;
+  height: $undo-redo-size;
+  color: blue;
+
+  &::after {
+    content: '\238c';
+  }
+
+  &:disabled {
+    color: gray;
+  }
+}
+
+.undo {
+  left: 0;
+}
+
+.redo {
+  left: $undo-redo-size;
+  transform: scale(-1, 1);
+}

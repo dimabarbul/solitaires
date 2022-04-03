@@ -1,6 +1,4 @@
-﻿import Event from './Event';
-
-export default class EventHandler<T extends Event> {
+﻿export default class EventHandler<T> {
 
     private readonly _listeners: ((event: T) => void)[] = [];
 

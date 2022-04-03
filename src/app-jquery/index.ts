@@ -6,7 +6,7 @@ const deck: Deck = Deck.getShortDeck();
 const gameService: GameService = new GameService();
 gameService.start(deck.cards);
 
-gameService.onGameFinished.subscribe(_ => {
+gameService.onGameFinished.subscribe(() => {
     window.alert('You won!');
 });
 

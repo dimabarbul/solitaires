@@ -6,7 +6,7 @@ import CardDto from '../../domain/dto/CardDto';
 
 export default class BaseWidget extends CardStackWidget {
 
-    constructor(gameService: GameService, element: HTMLDivElement, index: number, cards: CardWidget[]) {
+    constructor(gameService: GameService, element: HTMLElement, index: number, cards: CardWidget[]) {
         super(gameService, element, index, CardStackDirection.None, cards);
 
         this.makeDroppable();

@@ -20,8 +20,8 @@ export default class AppWidget {
         this.initEvents();
     }
 
-    public createLayout(cardsDisposition: CardsDispositionDto): void {
-        this.createStacks(cardsDisposition);
+    public createLayout(): void {
+        this.createStacks(this._gameService.getCardsDisposition());
     }
 
     private createStacks(cardsDisposition: CardsDispositionDto): void {

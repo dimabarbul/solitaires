@@ -17,7 +17,7 @@ export default class CardStackWidget {
 
     constructor(
         protected readonly _gameService: GameService,
-        protected readonly _element: HTMLDivElement,
+        protected readonly _element: HTMLElement,
         protected readonly _index: number,
         protected readonly _direction: CardStackDirection,
         protected readonly _cards: CardWidget[]

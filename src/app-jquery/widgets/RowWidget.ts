@@ -6,7 +6,7 @@ import * as $ from 'jquery';
 import 'jqueryui';
 
 export default class RowWidget extends CardStackWidget {
-    constructor(gameService: GameService, element: HTMLDivElement, index: number, cards: CardWidget[]) {
+    constructor(gameService: GameService, element: HTMLElement, index: number, cards: CardWidget[]) {
         super(gameService, element, index, index < 4 ? CardStackDirection.Left : CardStackDirection.Right, cards);
     }
 

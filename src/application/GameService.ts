@@ -1,5 +1,4 @@
 ﻿import Game from '../domain/Game';
-import Deck from '../domain/Deck';
 import EventHandler from '../core/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
@@ -8,6 +7,7 @@ import RowDto from '../domain/dto/RowDto';
 import CardPositionType from '../domain/CardPositionType';
 import BaseDto from '../domain/dto/BaseDto';
 import CardPosition from '../domain/CardPosition';
+import Card from '../domain/Card';
 
 export default class GameService {
     private _game: Game|null = null;
@@ -22,10 +22,10 @@ export default class GameService {
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
 
-    public start(deck: Deck): void {
+    public start(cards: Card[]): void {
         this._game = new Game();
         this.initEvents();
-        this.game.start(deck.cards);
+        this.game.start(cards);
     }
 
     public getCardsDisposition(): CardsDispositionDto {

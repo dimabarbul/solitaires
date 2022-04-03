@@ -8,7 +8,7 @@ import 'jqueryui';
 export default class CardWidget {
     constructor(
         private readonly _gameService: GameService,
-        private readonly _element: HTMLDivElement,
+        private readonly _element: HTMLElement,
         private readonly _card: CardDto
     ) {
         this.initElement();

@@ -8,6 +8,7 @@ import CardPositionType from '../domain/CardPositionType';
 import BaseDto from '../domain/dto/BaseDto';
 import CardPosition from '../domain/CardPosition';
 import Card from '../domain/Card';
+import GameFinishedEvent from '../domain/events/GameFinishedEvent';
 
 export default class GameService {
     private _game: Game|null = null;
@@ -21,6 +22,7 @@ export default class GameService {
     }
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
+    public readonly onGameFinished: EventHandler<GameFinishedEvent> = new EventHandler<GameFinishedEvent>();
 
     public start(cards: Card[]): void {
         this._game = new Game();
@@ -124,9 +126,8 @@ export default class GameService {
     }
 
     private initEvents(): void {
-        this.game.onCardMoved.subscribe((e: CardMovedEvent): void => {
-            this.onCardMoved.trigger(e);
-        });
+        this.game.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
+        this.game.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
     }
 
     public canMoveCardToBase(card: CardDto, baseIndex: number|null = null): boolean {

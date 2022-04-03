@@ -8,18 +8,21 @@ import BaseDto from './dto/BaseDto';
 import CardPosition from './CardPosition';
 import CardValue, { getShortDeckDifference } from './CardValue';
 import EventHandler from '../core/EventHandler';
+import GameFinishedEvent from './events/GameFinishedEvent';
 
 export default class Game {
     private readonly _bases: Card[][] = new Array(4);
     private readonly _rows: Card[][] = new Array(8);
 
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
+    public readonly onGameFinished: EventHandler<GameFinishedEvent> = new EventHandler<GameFinishedEvent>();
 
     public start(cards: Card[]): void {
         if (cards.length !== 36) {
             throw new Error(`Invalid number of cards. Expected 36, got ${cards.length}`);
         }
 
+        this.initEvents();
         this.initBases(cards);
         this.initRows(cards);
     }
@@ -96,7 +99,7 @@ export default class Game {
 
     public isGameFinished(): boolean {
         for (let i = 0; i < 4; i++) {
-            if (this._bases[i].length !== 13) {
+            if (this._bases[i].length !== 9) {
                 return false;
             }
         }
@@ -121,6 +124,12 @@ export default class Game {
         }
 
         return new CardsDispositionDto(bases, rows);
+    }
+
+    private initEvents(): void {
+        this.onCardMoved.subscribe(_ => {
+            this.checkIfGameIsFinished();
+        })
     }
 
     private getBaseNumber(card: Card): number {
@@ -152,6 +161,12 @@ export default class Game {
                     rowIndex++;
                 }
             }
+        }
+    }
+
+    private checkIfGameIsFinished(): void {
+        if (this.isGameFinished()) {
+            this.onGameFinished.trigger(new GameFinishedEvent());
         }
     }
 }

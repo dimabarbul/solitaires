@@ -3,14 +3,8 @@
 module.exports = {
     mode: 'development',
     entry: {
-        'app-jquery.js': './src/app-jquery/index.ts',
-        'styles.js': './styles/index.scss',
-        // 'vendor.js': [
-        //     // path.resolve(__dirname, 'node_modules', 'bootstrap', 'dist', 'js', 'bootstrap.js'),
-        //     // path.resolve(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),
-        //     path.resolve(__dirname, 'vendor', 'jquery-ui.min.js'),
-        //     path.resolve(__dirname, 'vendor', 'jquery-ui.min.css'),
-        // ],
+        'besieged-fortress-jquery.js': './src/besieged-fortress/client-jquery/index.ts',
+        'besieged-fortress-styles.js': './styles/besieged-fortress/index.scss',
     },
     module: {
         rules: [

@@ -1,6 +1,6 @@
-﻿import CardSuit, { suitFromString, suitToString } from '../CardSuit';
-import CardValue, { valueFromString, valueToString } from '../CardValue';
-import Card from '../Card';
+﻿import CardSuit, { suitFromString, suitToString } from '../../../core/CardSuit';
+import CardValue, { valueFromString, valueToString } from '../../../core/CardValue';
+import Card from '../../../core/Card';
 
 export default class CardDto {
     constructor(

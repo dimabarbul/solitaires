@@ -1,4 +1,4 @@
-﻿import Card from './Card';
+﻿import Card from '../../core/Card';
 import CardDto from './dto/CardDto';
 import RowDto from './dto/RowDto';
 import CardPositionType from './CardPositionType';
@@ -6,9 +6,9 @@ import CardMovedEvent from './events/CardMovedEvent';
 import CardsDispositionDto from './dto/CardsDispositionDto';
 import BaseDto from './dto/BaseDto';
 import CardPosition from './CardPosition';
-import CardValue, { getShortDeckDifference } from './CardValue';
-import EventHandler from '../core/EventHandler';
-import ICommand from '../core/ICommand';
+import CardValue, { getShortDeckDifference } from '../../core/CardValue';
+import EventHandler from '../../core/EventHandler';
+import ICommand from '../../core/ICommand';
 import MoveCardCommand from './commands/MoveCardCommand';
 
 export default class Game {

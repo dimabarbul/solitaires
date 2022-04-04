@@ -1,5 +1,5 @@
-﻿import GameService from '../../application/GameService';
-import Point from '../../application/Point';
+﻿import GameService from '../../besieged-fortress/application/GameService';
+import Point from '../../core/Point';
 import CardWidget from './CardWidget';
 
 export enum CardStackDirection {

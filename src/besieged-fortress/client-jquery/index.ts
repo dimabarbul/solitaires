@@ -1,6 +1,6 @@
 import GameService from '../application/GameService';
-import AppWidget from './widgets/AppWidget';
-import Deck from '../domain/Deck';
+import Deck from '../../core/Deck';
+import AppWidget from '../../base-jquery/widgets/AppWidget';
 
 const deck: Deck = Deck.getShortDeck();
 const gameService: GameService = new GameService();

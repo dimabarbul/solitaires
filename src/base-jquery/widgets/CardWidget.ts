@@ -1,7 +1,7 @@
-﻿import GameService from '../../application/GameService';
-import CardDto from '../../domain/dto/CardDto';
-import { valueToString } from '../../domain/CardValue';
-import { suitToString } from '../../domain/CardSuit';
+﻿import GameService from '../../besieged-fortress/application/GameService';
+import CardDto from '../../besieged-fortress/domain/dto/CardDto';
+import { valueToString } from '../../core/CardValue';
+import { suitToString } from '../../core/CardSuit';
 import * as $ from 'jquery';
 import 'jqueryui';
 
@@ -88,10 +88,8 @@ export default class CardWidget {
             //     this._gameService.canMoveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card));
             // console.log(ui.draggable.data('originalLeft'), ui.draggable.data('originalTop'));
             if (!this._gameService.canMoveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card)) {
-                ui.draggable.animate({
-                    left: ui.draggable.data('originalLeft'),
-                    top: ui.draggable.data('originalTop'),
-                });
+                ui.draggable.css('left', ui.draggable.data('originalLeft'));
+                ui.draggable.css('top', ui.draggable.data('originalTop'));
 
                 return;
             }
@@ -102,7 +100,7 @@ export default class CardWidget {
     }
 
     private initEvents(): void {
-        this._element.addEventListener('dblclick', (event: Event): void => {
+        this._element.addEventListener('dblclick', (_): void => {
             if (this._gameService.canMoveCardToBase(this._card)) {
                 this._gameService.moveCardToBase(this._card);
             }

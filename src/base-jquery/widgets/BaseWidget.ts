@@ -1,8 +1,8 @@
-﻿import GameService from '../../application/GameService';
+﻿import GameService from '../../besieged-fortress/application/GameService';
 import CardStackWidget, { CardStackDirection } from './CardStackWidget';
 import CardWidget from './CardWidget';
 import * as $ from 'jquery';
-import CardDto from '../../domain/dto/CardDto';
+import CardDto from '../../besieged-fortress/domain/dto/CardDto';
 
 export default class BaseWidget extends CardStackWidget {
 
@@ -27,10 +27,8 @@ export default class BaseWidget extends CardStackWidget {
             const droppedCard: CardDto = CardDto.fromString(ui.draggable.data('card'));
 
             if (!this._gameService.canMoveCardToBase(droppedCard, this._index)) {
-                ui.draggable.animate({
-                    left: ui.draggable.data('originalLeft'),
-                    top: ui.draggable.data('originalTop'),
-                });
+                ui.draggable.css('left', ui.draggable.data('originalLeft'));
+                ui.draggable.css('top', ui.draggable.data('originalTop'));
 
                 return;
             }

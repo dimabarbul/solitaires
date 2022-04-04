@@ -1,5 +1,5 @@
 ﻿import * as assert from 'assert';
-import History from '../../src/application/History';
+import History from '../../src/core/History';
 import ICommand from '../../src/core/ICommand';
 
 const command1: ICommand = {

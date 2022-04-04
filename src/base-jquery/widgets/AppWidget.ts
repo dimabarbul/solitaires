@@ -1,10 +1,10 @@
 ﻿import RowWidget from './RowWidget';
 import BaseWidget from './BaseWidget';
-import CardDto from '../../domain/dto/CardDto';
-import GameService from '../../application/GameService';
-import CardPositionType from '../../domain/CardPositionType';
-import CardMovedEvent from '../../domain/events/CardMovedEvent';
-import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
+import CardDto from '../../besieged-fortress/domain/dto/CardDto';
+import GameService from '../../besieged-fortress/application/GameService';
+import CardPositionType from '../../besieged-fortress/domain/CardPositionType';
+import CardMovedEvent from '../../besieged-fortress/domain/events/CardMovedEvent';
+import CardsDispositionDto from '../../besieged-fortress/domain/dto/CardsDispositionDto';
 import CardWidget from './CardWidget';
 
 export default class AppWidget {

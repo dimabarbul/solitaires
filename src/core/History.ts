@@ -1,5 +1,5 @@
-﻿import ICommand from '../core/ICommand';
-import EventHandler from '../core/EventHandler';
+﻿import ICommand from './ICommand';
+import EventHandler from './EventHandler';
 
 export default class History {
 

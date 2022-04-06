@@ -20,11 +20,22 @@ function getShortDeckCardValue(value: CardValue): number {
     return value > CardValue.Ace ? value - 4 : value;
 }
 
+function getFullDeckCardValue(value: CardValue): number {
+    return value;
+}
+
 export function getShortDeckDifference(left: CardValue, right: CardValue): number {
     const shortDeckLeft = getShortDeckCardValue(left);
     const shortDeckRight = getShortDeckCardValue(right);
 
     return shortDeckLeft - shortDeckRight;
+}
+
+export function getFullDeckDifference(left: CardValue, right: CardValue): number {
+    const fullDeckLeft = getFullDeckCardValue(left);
+    const fullDeckRight = getFullDeckCardValue(right);
+
+    return fullDeckLeft - fullDeckRight;
 }
 
 export function valueToString(value: CardValue): string {

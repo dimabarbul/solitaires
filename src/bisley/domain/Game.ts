@@ -3,17 +3,22 @@ import CardDto from './dto/CardDto';
 import CardPosition from './CardPosition';
 import CardPositionType from './CardPositionType';
 import ICommand from '../../core/ICommand';
-import MoveCardCommand from './commands/MoveCardCommand';
 import AceFoundation from './AceFoundation';
 import CardSuit from '../../core/CardSuit';
 import KingFoundation from './KingFoundation';
 import Column from './Column';
 import CardValue from '../../core/CardValue';
+import EventHandler from '../../core/EventHandler';
+import CardMovedEvent from './events/CardMovedEvent';
+import Command from '../../core/Command';
+import CardStack from './CardStack';
 
 export default class Game {
     private readonly _aceFoundations: AceFoundation[] = new Array(4);
     private readonly _kingFoundations: KingFoundation[] = new Array(4);
     private readonly _columns: Column[] = new Array(13);
+
+    public onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
 
     public start(cards: Card[]): void {
         if (cards.length !== 52) {
@@ -50,6 +55,11 @@ export default class Game {
             && (this.canMoveToAnyAceFoundation(card) || this.canMoveToAnyKingFoundation(card));
     }
 
+    public canMoveToColumn(cardDto: CardDto, columnNumber: number): boolean {
+        return this.canMove(cardDto)
+            && this._columns[columnNumber].canPush(this.convert(cardDto));
+    }
+
     public moveToAnyFoundation(card: CardDto): ICommand {
         if (!this.canMove(card)) {
             throw new Error(`Cannot move card ${card.toString()}`);
@@ -74,7 +84,7 @@ export default class Game {
         }
 
         const cardPosition: CardPosition = this.getCardPosition(card);
-        const command: ICommand = new MoveCardCommand(
+        const command: ICommand = new Command(
             cardPosition.position === CardPositionType.KingFoundation ?
                 this.moveFromKingFoundationToAceFoundation.bind(this, cardPosition.positionIndex, foundationNumber) :
                 this.moveFromColumnToAceFoundation.bind(this, cardPosition.positionIndex, foundationNumber),
@@ -94,7 +104,7 @@ export default class Game {
         }
 
         const cardPosition: CardPosition = this.getCardPosition(card);
-        const command: ICommand = new MoveCardCommand(
+        const command: ICommand = new Command(
             cardPosition.position === CardPositionType.AceFoundation ?
                 this.moveFromAceFoundationToKingFoundation.bind(this, cardPosition.positionIndex, foundationNumber) :
                 this.moveFromColumnToKingFoundation.bind(this, cardPosition.positionIndex, foundationNumber),
@@ -108,16 +118,15 @@ export default class Game {
         return command;
     }
 
-    public moveToColumn(cardDto: CardDto, toCard: CardDto): ICommand {
-        if (!this.canMove(cardDto)) {
-            throw new Error(`Cannot move card ${cardDto}`);
+    public moveToColumn(cardDto: CardDto, columnNumber: number): ICommand {
+        if (!this.canMoveToColumn(cardDto, columnNumber)) {
+            throw new Error(`Cannot move card ${cardDto} to column ${columnNumber}`);
         }
 
         const cardPosition: CardPosition = this.getCardPosition(cardDto);
-        const toCardPosition: CardPosition = this.getCardPosition(toCard);
-        const command: ICommand = new MoveCardCommand(
-            this.moveFromColumnToColumn.bind(this, cardPosition.positionIndex, toCardPosition.positionIndex),
-            this.moveFromColumnToColumn.bind(this, toCardPosition.positionIndex, cardPosition.positionIndex),
+        const command: ICommand = new Command(
+            this.moveFromColumnToColumn.bind(this, cardPosition.positionIndex, columnNumber),
+            this.moveFromColumnToColumn.bind(this, columnNumber, cardPosition.positionIndex),
         );
 
         command.execute();
@@ -219,6 +228,12 @@ export default class Game {
 
         const card: Card = kingFoundation.pop();
         aceFoundation.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.kingFoundationPosition(kingFoundationNumber, kingFoundation.length),
+            CardPosition.aceFoundationPosition(aceFoundationNumber, aceFoundation.length - 1)
+        ));
     }
 
     private moveFromColumnToAceFoundation(columnNumber: number, aceFoundationNumber: number): void {
@@ -227,6 +242,12 @@ export default class Game {
 
         const card: Card = column.pop();
         aceFoundation.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.columnPosition(columnNumber, column.length),
+            CardPosition.aceFoundationPosition(aceFoundationNumber, aceFoundation.length - 1)
+        ));
     }
 
     private moveFromAceFoundationToKingFoundation(aceFoundationNumber: number, kingFoundationNumber: number): void {
@@ -235,6 +256,12 @@ export default class Game {
 
         const card: Card = aceFoundation.pop();
         kingFoundation.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.aceFoundationPosition(aceFoundationNumber, aceFoundation.length),
+            CardPosition.kingFoundationPosition(kingFoundationNumber, kingFoundation.length - 1)
+        ));
     }
 
     private moveFromAceFoundationToColumn(aceFoundationNumber: number, columnNumber: number): void {
@@ -243,14 +270,26 @@ export default class Game {
 
         const card: Card = aceFoundation.pop();
         column.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.aceFoundationPosition(aceFoundationNumber, aceFoundation.length),
+            CardPosition.columnPosition(columnNumber, column.length - 1)
+        ));
     }
 
     private moveFromColumnToKingFoundation(columnNumber: number, kingFoundationNumber: number): void {
-        const column = this._columns[columnNumber];
+        const column: CardStack = this._columns[columnNumber];
         const kingFoundation = this._kingFoundations[kingFoundationNumber];
 
         const card: Card = column.pop();
         kingFoundation.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.columnPosition(columnNumber, column.length),
+            CardPosition.kingFoundationPosition(kingFoundationNumber, kingFoundation.length - 1)
+        ));
     }
 
     private moveFromKingFoundationToColumn(kingFoundationNumber: number, columnNumber: number): void {
@@ -259,6 +298,12 @@ export default class Game {
 
         const card: Card = kingFoundation.pop();
         column.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.kingFoundationPosition(kingFoundationNumber, kingFoundation.length),
+            CardPosition.columnPosition(columnNumber, column.length - 1)
+        ));
     }
 
     private moveFromColumnToColumn(fromColumnNumber: number, toColumnNumber: number): void {
@@ -267,5 +312,11 @@ export default class Game {
 
         const card: Card = fromColumn.pop();
         toColumn.push(card);
+
+        this.onCardMoved.trigger(new CardMovedEvent(
+            CardDto.fromCard(card),
+            CardPosition.columnPosition(fromColumnNumber, fromColumn.length),
+            CardPosition.columnPosition(toColumnNumber, toColumn.length - 1)
+        ));
     }
 }

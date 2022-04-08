@@ -1,7 +1,7 @@
 import CardStack from '../../../src/bisley/domain/CardStack';
-import * as assert from 'assert';
-import Card from '../../../src/core/Card';
+import Card, { areCardsEqual } from '../../../src/core/Card';
 import { getAnotherRandomCard, getRandomCard } from './utils';
+import { expect } from 'chai';
 
 class TestCardStack extends CardStack {
     private readonly _canPush: boolean;
@@ -21,67 +21,78 @@ describe('card stack', () => {
     describe('is available card', () => {
         it('false for empty stack', () => {
             const stack: CardStack = new TestCardStack([]);
-            assert.strictEqual(stack.isCardAvailable(getRandomCard()), false);
+
+            expect(stack.isCardAvailable(getRandomCard())).to.be.false;
         });
         it('false when card is not in stack', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card]);
-            assert.strictEqual(stack.isCardAvailable(getAnotherRandomCard(card)), false);
+
+            expect(stack.isCardAvailable(getAnotherRandomCard(card))).to.be.false;
         });
         it('false when card is not top one', () => {
             const card: Card = getRandomCard();
             const anotherCard: Card = getAnotherRandomCard(card);
             const stack: CardStack = new TestCardStack([card, anotherCard]);
-            assert.strictEqual(stack.isCardAvailable(card), false);
+
+            expect(stack.isCardAvailable(card)).to.be.false;
         });
         it('true when card is the only one in stack', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card]);
-            assert.strictEqual(stack.isCardAvailable(card), true);
+
+            expect(stack.isCardAvailable(card)).to.be.true;
         });
         it('true when card is top one', () => {
             const card: Card = getRandomCard();
             const anotherCard: Card = getAnotherRandomCard(card);
             const stack: CardStack = new TestCardStack([card, anotherCard]);
-            assert.strictEqual(stack.isCardAvailable(anotherCard), true);
+
+            expect(stack.isCardAvailable(anotherCard)).to.be.true;
         });
     });
     describe('pop', () => {
         it('throws when stack is empty', () => {
             const stack: CardStack = new TestCardStack([]);
-            assert.throws(() => stack.pop());
+
+            expect((() => stack.pop())).to.throw;
         });
         it('returns top card', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card]);
-            assert.strictEqual(stack.pop(), card);
+
+            expect(areCardsEqual(stack.pop(), card)).to.be.true;
         });
     });
     describe('push', () => {
         it('throws when canPush returns false', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card], false);
-            assert.throws(() => stack.push(card));
+
+            expect((() => stack.push(card))).to.throw;
         });
         it('pushes card when canPush returns true', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card], true);
             stack.push(card);
-            assert.strictEqual(stack.pop(), card);
+
+            expect(areCardsEqual(stack.pop(), card)).to.be.true;
         });
     });
     describe('findCardIndex', () => {
         it('returns null when card is not in stack', () => {
             const card = getRandomCard();
             const stack: CardStack = new TestCardStack([card]);
-            assert.strictEqual(stack.findCardIndex(getAnotherRandomCard(card)), null);
+
+            expect(stack.findCardIndex(getAnotherRandomCard(card))).to.be.null;
         });
         it('returns index of card when card is in stack', () => {
             const card = getRandomCard();
             const anotherCard = getAnotherRandomCard(card);
             const stack: CardStack = new TestCardStack([card, anotherCard]);
-            assert.strictEqual(stack.findCardIndex(card), 0);
-            assert.strictEqual(stack.findCardIndex(anotherCard), 1);
+
+            expect(stack.findCardIndex(card)).to.equal(0);
+            expect(stack.findCardIndex(anotherCard)).to.equal(1);
         });
     });
 });

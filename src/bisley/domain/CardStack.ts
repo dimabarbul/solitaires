@@ -48,5 +48,9 @@ export default abstract class CardStack {
         return this._cards[this._cards.length - 1];
     }
 
+    public get length(): number {
+        return this._cards.length;
+    }
+
     abstract canPush(card: Card): boolean;
 }

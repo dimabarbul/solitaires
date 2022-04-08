@@ -11,7 +11,7 @@ export function getAnotherRandomSuit(existingSuit: CardSuit): CardSuit {
     let suit: CardSuit;
     do {
         suit = getRandomSuit();
-    } while (suit == existingSuit);
+    } while (suit === existingSuit);
 
     return suit;
 }
@@ -70,6 +70,17 @@ export class DeckBuilder {
 
     withCardInColumnAt(card: Card, columnNumber: number, number: number): DeckBuilder {
         this.moveCard(card, this.getColumnStartIndex(columnNumber) + number);
+
+        return this;
+    }
+
+    withUnavailableCard(card: Card): DeckBuilder {
+        return this.withUnavailableCardInColumn(card, getRandomNumber(0, 12));
+    }
+
+    withUnavailableCardInColumn(card: Card, columnNumber: number): DeckBuilder {
+        const cardNumber = getRandomNumber(0, this.getColumnLength(columnNumber) - 2);
+        this.moveCard(card, this.getColumnStartIndex(columnNumber) + cardNumber);
 
         return this;
     }

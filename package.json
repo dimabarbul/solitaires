@@ -7,9 +7,11 @@
     "test": "mocha"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.0",
     "@types/jquery": "^3.5.14",
     "@types/jqueryui": "^1.12.16",
     "@types/mocha": "^9.1.0",
+    "chai": "^4.3.6",
     "css-loader": "^6.7.1",
     "jquery": "^3.6.0",
     "jqueryui": "^1.11.1",

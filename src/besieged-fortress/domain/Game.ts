@@ -9,7 +9,7 @@ import CardPosition from './CardPosition';
 import CardValue, { getShortDeckDifference } from '../../core/CardValue';
 import EventHandler from '../../core/EventHandler';
 import ICommand from '../../core/ICommand';
-import MoveCardCommand from './commands/MoveCardCommand';
+import Command from '../../core/Command';
 
 export default class Game {
     private readonly _bases: Card[][] = new Array(4);
@@ -73,7 +73,7 @@ export default class Game {
         const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
         const baseNumber: number = this.getBaseNumber(rowCard);
 
-        const command: MoveCardCommand = new MoveCardCommand(
+        const command: Command = new Command(
             this.moveCardFromRowToBase.bind(this, fromRowNumber, baseNumber),
             this.moveCardFromBaseToRow.bind(this, baseNumber, fromRowNumber),
         );
@@ -88,7 +88,7 @@ export default class Game {
             throw new Error(`Cannot move card to row: ${fromRowNumber} => ${toRowNumber}`);
         }
 
-        const command: MoveCardCommand = new MoveCardCommand(
+        const command: Command = new Command(
             this.moveCardFromRowToRow.bind(this, fromRowNumber, toRowNumber),
             this.moveCardFromRowToRow.bind(this, toRowNumber, fromRowNumber),
         );

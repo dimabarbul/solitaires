@@ -65,12 +65,7 @@ export default class GameService {
         }
 
         if (targetCardPosition.position === CardPositionType.Base) {
-
-            if (sourceCard.suit !== targetCard.suit) {
-                return false;
-            }
-
-            return this.game.canMoveCardToAnyBase(sourceCardPosition.positionIndex);
+            return this.game.canMoveCardToBase(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
         }
 
         return this.game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
@@ -89,10 +84,6 @@ export default class GameService {
     }
 
     public moveCardToCard(sourceCard: CardDto, targetCard: CardDto) {
-        if (!this.canMoveCardToCard(sourceCard, targetCard)) {
-            throw new Error(`Cannot move card to card: ${sourceCard.toString()} => ${targetCard.toString()}`);
-        }
-
         const sourceCardPosition: CardPosition = this.getCardPosition(sourceCard);
         const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
 

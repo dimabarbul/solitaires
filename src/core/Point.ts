@@ -1,15 +1,15 @@
 ﻿export default class Point {
-    constructor(
+    public constructor(
         private readonly _x: number,
         private readonly _y: number
     ) {
     }
 
-    get x(): number {
+    public get x(): number {
         return this._x;
     }
 
-    get y(): number {
+    public get y(): number {
         return this._y;
     }
 }

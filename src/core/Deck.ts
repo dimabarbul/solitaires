@@ -16,6 +16,16 @@ export default class Deck {
         CardValue.Jack, CardValue.Queen, CardValue.King];
     private static readonly _shortDeckValuesInReverse: CardValue[] = Deck._shortDeckValues.reverse();
 
+    private readonly _cards: Card[];
+
+    public constructor(cards: Card[], shuffle: boolean = true) {
+        this._cards = cards.slice(0, cards.length);
+
+        if (shuffle) {
+            this.shuffle();
+        }
+    }
+
     public static getFullDeck(): Deck {
         return new Deck(Deck.createCards(Deck._fullDeckValues));
     }
@@ -30,19 +40,14 @@ export default class Deck {
 
     private static createCards(values: CardValue[]): Card[] {
         const cards: Card[] = [];
-        for (let suit of Deck._suits) {
-            for (let value of values) {
+
+        for (const suit of Deck._suits) {
+            for (const value of values) {
                 cards.push(new Card(suit, value));
             }
         }
 
         return cards;
-    }
-
-    public constructor(private readonly _cards: Card[], shuffle: boolean = true) {
-        if (shuffle) {
-            this.shuffle();
-        }
     }
 
     public get cards(): Card[] {

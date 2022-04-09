@@ -3,7 +3,7 @@ import CardValue, { valueFromString, valueToString } from '../../../core/CardVal
 import Card from '../../../core/Card';
 
 export default class CardDto {
-    constructor(
+    public constructor(
         private readonly _suit: CardSuit,
         private readonly _value: CardValue
     ) {
@@ -11,6 +11,7 @@ export default class CardDto {
 
     public static fromString(cardString: string): CardDto {
         const [value, suit] = cardString.split('-');
+
         return new CardDto(suitFromString(suit), valueFromString(value));
     }
 
@@ -18,11 +19,11 @@ export default class CardDto {
         return new CardDto(card.suit, card.value);
     }
 
-    get suit(): CardSuit {
+    public get suit(): CardSuit {
         return this._suit;
     }
 
-    get value(): CardValue {
+    public get value(): CardValue {
         return this._value;
     }
 

@@ -12,9 +12,9 @@ export default class AppWidget {
     private readonly _bases: BaseWidget[] = new Array(4);
     private readonly _rows: RowWidget[] = new Array(8);
 
-    constructor(private readonly _gameService: GameService, rootElementId: string) {
+    public constructor(private readonly _gameService: GameService, rootElementId: string) {
         this._root = document.getElementById(rootElementId)
-            || (() => {
+            ?? ((): never => {
                 throw new Error(`Element with id ${rootElementId} not found`);
             })();
         this.initEvents();
@@ -47,6 +47,7 @@ export default class AppWidget {
 
     private createCards(cards: CardDto[]): CardWidget[] {
         const cardWidgets: CardWidget[] = new Array(cards.length);
+
         for (let i = 0; i < cards.length; i++) {
             const cardElement: HTMLDivElement = document.createElement('div');
             this._root.appendChild(cardElement);

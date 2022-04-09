@@ -2,17 +2,17 @@
 import CardValue, { valueToString } from './CardValue';
 
 export default class Card {
-    constructor(
+    public constructor(
         private readonly _suit: CardSuit,
         private readonly _value: CardValue
     ) {
     }
 
-    get suit(): CardSuit {
+    public get suit(): CardSuit {
         return this._suit;
     }
 
-    get value(): CardValue {
+    public get value(): CardValue {
         return this._value;
     }
 
@@ -21,6 +21,6 @@ export default class Card {
     }
 }
 
-export function areCardsEqual(left: Card, right: Card) {
+export function areCardsEqual(left: Card, right: Card): boolean {
     return left.value === right.value && left.suit === right.suit;
 }

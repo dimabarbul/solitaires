@@ -2,17 +2,17 @@
 import RowDto from './RowDto';
 
 export default class CardsDispositionDto {
-    constructor(
+    public constructor(
         private readonly _bases: BaseDto[],
         private readonly _rows: RowDto[]
     ) {
     }
 
-    get bases(): BaseDto[] {
+    public get bases(): BaseDto[] {
         return this._bases;
     }
 
-    get rows(): RowDto[] {
+    public get rows(): RowDto[] {
         return this._rows;
     }
 }

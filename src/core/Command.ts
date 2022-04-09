@@ -1,7 +1,7 @@
 ﻿import ICommand from './ICommand';
 
 export default class Command implements ICommand {
-    constructor(
+    public constructor(
         private readonly _executeAction: () => void,
         private readonly _undoAction: () => void
     ) {

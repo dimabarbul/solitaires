@@ -6,13 +6,13 @@ import { expect } from 'chai';
 class TestCardStack extends CardStack {
     private readonly _canPush: boolean;
 
-    constructor(cards: Card[], canPush: boolean = true) {
+    public constructor(cards: Card[], canPush: boolean = true) {
         super(cards);
 
         this._canPush = canPush;
     }
 
-    public canPush(card: Card): boolean {
+    public canPush(_: Card): boolean {
         return this._canPush;
     }
 }

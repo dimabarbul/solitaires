@@ -3,37 +3,39 @@ import Point from '../../core/Point';
 import CardWidget from './CardWidget';
 
 export enum CardStackDirection {
-    None,
-    Left,
-    Right,
-    Top,
-    Bottom,
+    None = 0,
+    Left = 1,
+    Right = 2,
+    Top = 3,
+    Bottom = 4,
 }
 
 export default class CardStackWidget {
-    private static readonly XDelta = 25;
-    private static readonly YDelta = 25;
-    private static readonly BaseZLevel = 0;
+    private static readonly _xDelta = 25;
+    private static readonly _yDelta = 25;
+    private static readonly _baseZLevel = 0;
 
-    constructor(
-        protected readonly _gameService: GameService,
-        protected readonly _element: HTMLElement,
-        protected readonly _index: number,
-        protected readonly _direction: CardStackDirection,
-        protected readonly _cards: CardWidget[]
+    public constructor(
+        protected readonly gameService: GameService,
+        protected readonly element: HTMLElement,
+        protected readonly index: number,
+        protected readonly direction: CardStackDirection,
+        protected readonly cards: CardWidget[]
     ) {
         this.initElement();
         this.refreshCards();
     }
 
     public pushCard(card: CardWidget): void {
-        this._cards.push(card);
+        this.cards.push(card);
         this.refreshCards();
     }
 
     public popCard(): CardWidget {
-        const card: CardWidget = this._cards.pop()
-            || (() => { throw new Error('No cards to pop'); })();
+        const card: CardWidget = this.cards.pop()
+            ?? ((): never => {
+                throw new Error('No cards to pop');
+            })();
 
         this.refreshCards();
 
@@ -45,63 +47,64 @@ export default class CardStackWidget {
     }
 
     protected initElement(): void {
-        this._element.className = this.getElementClassName();
-        this._element.style.zIndex = CardStackWidget.BaseZLevel.toString();
+        this.element.className = this.getElementClassName();
+        this.element.style.zIndex = CardStackWidget._baseZLevel.toString();
     }
 
     protected refreshCards(): void {
         const topLeftCorner: Point = this.getTopLeftCorner();
-        for (let i = 0; i < this._cards.length; i++){
-            let card = this._cards[i];
+
+        for (let i = 0; i < this.cards.length; i++){
+            const card = this.cards[i];
             card.move(
                 topLeftCorner.x + i * this.getXDelta(),
                 topLeftCorner.y + i * this.getYDelta());
-            card.bringToFront(i + 1 + CardStackWidget.BaseZLevel);
+            card.bringToFront(i + 1 + CardStackWidget._baseZLevel);
             this.updateDraggableState(card, i);
         }
     }
 
+    protected updateDraggableState(card: CardWidget, index: number): void {
+        if (index === this.cards.length - 1) {
+            card.enableDragAndDrop();
+        } else {
+            card.disableDragAndDrop();
+        }
+    }
+
     private getTopLeftCorner(): Point {
-        const clientRect: DOMRect = this._element.getBoundingClientRect();
+        const clientRect: DOMRect = this.element.getBoundingClientRect();
 
         return new Point(clientRect.left + window.scrollX, clientRect.top + window.scrollY);
     }
 
     private getXDelta(): number {
-        switch (this._direction) {
+        switch (this.direction) {
             case CardStackDirection.Left:
-                return -CardStackWidget.XDelta;
+                return -CardStackWidget._xDelta;
             case CardStackDirection.Right:
-                return CardStackWidget.XDelta;
+                return CardStackWidget._xDelta;
             case CardStackDirection.None:
             case CardStackDirection.Top:
             case CardStackDirection.Bottom:
                 return 0;
         }
 
-        throw new Error(`Unexpected direction ${this._direction}`);
+        throw new Error(`Unexpected direction ${this.direction}`);
     }
 
     private getYDelta(): number {
-        switch (this._direction) {
+        switch (this.direction) {
             case CardStackDirection.None:
             case CardStackDirection.Left:
             case CardStackDirection.Right:
                 return 0;
             case CardStackDirection.Top:
-                return CardStackWidget.YDelta;
+                return CardStackWidget._yDelta;
             case CardStackDirection.Bottom:
-                return -CardStackWidget.YDelta;
+                return -CardStackWidget._yDelta;
         }
 
-        throw new Error(`Unexpected direction ${this._direction}`);
-    }
-
-    protected updateDraggableState(card: CardWidget, index: number): void {
-        if (index === this._cards.length - 1) {
-            card.enableDragAndDrop();
-        } else {
-            card.disableDragAndDrop();
-        }
+        throw new Error(`Unexpected direction ${this.direction}`);
     }
 }

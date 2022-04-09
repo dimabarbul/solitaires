@@ -9,6 +9,8 @@ import CardPositionType from '../../../src/bisley/domain/CardPositionType';
 import '../../assertions';
 import { expect } from 'chai';
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 describe('game', () => {
     describe('start', () => {
         it('can start with 52 cards', () => {
@@ -235,13 +237,14 @@ describe('game', () => {
 
             game.moveToAnyFoundation(CardDto.fromCard(two));
 
-            expect(cardMovedEvent.card).to.be.cardDto(two);
-            expect(cardMovedEvent.fromPosition.position).to.equal(CardPositionType.Column);
-            expect(cardMovedEvent.fromPosition.positionIndex).to.equal(columnNumber);
-            expect(cardMovedEvent.fromPosition.index).to.equal(columnNumber < 4 ? 2 : 3);
-            expect(cardMovedEvent.toPosition.position).to.equal(CardPositionType.AceFoundation);
-            expect(cardMovedEvent.toPosition.positionIndex).to.be.within(0, 3);
-            expect(cardMovedEvent.toPosition.index).to.equal(1);
+            expect(cardMovedEvent).to.not.be.null;
+            expect(cardMovedEvent!.card).to.be.cardDto(two);
+            expect(cardMovedEvent!.fromPosition.position).to.equal(CardPositionType.Column);
+            expect(cardMovedEvent!.fromPosition.positionIndex).to.equal(columnNumber);
+            expect(cardMovedEvent!.fromPosition.index).to.equal(columnNumber < 4 ? 2 : 3);
+            expect(cardMovedEvent!.toPosition.position).to.equal(CardPositionType.AceFoundation);
+            expect(cardMovedEvent!.toPosition.positionIndex).to.be.within(0, 3);
+            expect(cardMovedEvent!.toPosition.index).to.equal(1);
         });
         it('correct event when moved to king foundation', () => {
             const king = new Card(getRandomSuit(), CardValue.King);
@@ -257,13 +260,14 @@ describe('game', () => {
 
             game.moveToAnyFoundation(CardDto.fromCard(king));
 
-            expect(cardMovedEvent.card).to.be.cardDto(king);
-            expect(cardMovedEvent.fromPosition.position).to.equal(CardPositionType.Column);
-            expect(cardMovedEvent.fromPosition.positionIndex).to.equal(columnNumber);
-            expect(cardMovedEvent.fromPosition.index).to.equal(columnNumber < 4 ? 2 : 3);
-            expect(cardMovedEvent.toPosition.position).to.equal(CardPositionType.KingFoundation);
-            expect(cardMovedEvent.toPosition.positionIndex).to.be.within(0, 3);
-            expect(cardMovedEvent.toPosition.index).to.equal(0);
+            expect(cardMovedEvent).to.not.be.null;
+            expect(cardMovedEvent!.card).to.be.cardDto(king);
+            expect(cardMovedEvent!.fromPosition.position).to.equal(CardPositionType.Column);
+            expect(cardMovedEvent!.fromPosition.positionIndex).to.equal(columnNumber);
+            expect(cardMovedEvent!.fromPosition.index).to.equal(columnNumber < 4 ? 2 : 3);
+            expect(cardMovedEvent!.toPosition.position).to.equal(CardPositionType.KingFoundation);
+            expect(cardMovedEvent!.toPosition.positionIndex).to.be.within(0, 3);
+            expect(cardMovedEvent!.toPosition.index).to.equal(0);
         });
         it('correct event when can be moved to either ace or king foundation', () => {
             const suit = getRandomSuit();
@@ -290,14 +294,15 @@ describe('game', () => {
 
             game.moveToAnyFoundation(CardDto.fromCard(eight));
 
-            expect(cardMovedEvent.card).to.be.cardDto(eight);
-            expect(cardMovedEvent.fromPosition.position).to.equal(CardPositionType.Column);
-            expect(cardMovedEvent.fromPosition.positionIndex).to.equal(eightColumnNumber);
-            expect(cardMovedEvent.fromPosition.index).to.equal(3);
-            expect(cardMovedEvent.toPosition.position).to.equal(CardPositionType.AceFoundation);
-            expect(cardMovedEvent.toPosition.positionIndex).to.be.within(0, 3);
+            expect(cardMovedEvent).to.not.be.null;
+            expect(cardMovedEvent!.card).to.be.cardDto(eight);
+            expect(cardMovedEvent!.fromPosition.position).to.equal(CardPositionType.Column);
+            expect(cardMovedEvent!.fromPosition.positionIndex).to.equal(eightColumnNumber);
+            expect(cardMovedEvent!.fromPosition.index).to.equal(3);
+            expect(cardMovedEvent!.toPosition.position).to.equal(CardPositionType.AceFoundation);
+            expect(cardMovedEvent!.toPosition.positionIndex).to.be.within(0, 3);
             // + 1 because of ace
-            expect(cardMovedEvent.toPosition.index).to.equal(toAceFoundation.length + 1);
+            expect(cardMovedEvent!.toPosition.index).to.equal(toAceFoundation.length + 1);
         });
     });
     describe('can move to column', () => {

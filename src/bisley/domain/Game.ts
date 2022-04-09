@@ -14,11 +14,11 @@ import Command from '../../core/Command';
 import CardStack from './CardStack';
 
 export default class Game {
+    public onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
+
     private readonly _aceFoundations: AceFoundation[] = new Array(4);
     private readonly _kingFoundations: KingFoundation[] = new Array(4);
     private readonly _columns: Column[] = new Array(13);
-
-    public onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
 
     public start(cards: Card[]): void {
         if (cards.length !== 52) {
@@ -31,16 +31,19 @@ export default class Game {
 
     public canMove(cardDto: CardDto): boolean {
         const card: Card = this.convert(cardDto);
+
         for (const aceFoundation of this._aceFoundations) {
             if (aceFoundation.isCardAvailable(card)) {
                 return true;
             }
         }
+
         for (const kingFoundation of this._kingFoundations) {
             if (kingFoundation.isCardAvailable(card)) {
                 return true;
             }
         }
+
         for (const column of this._columns) {
             if (column.isCardAvailable(card)) {
                 return true;
@@ -136,6 +139,7 @@ export default class Game {
 
     private initFoundations(): void {
         const suits: CardSuit[] = [ CardSuit.Clubs, CardSuit.Diamonds, CardSuit.Hearts, CardSuit.Spades ];
+
         for (let i = 0; i < suits.length; i++) {
             this._aceFoundations[i] = new AceFoundation(suits[i]);
             this._kingFoundations[i] = new KingFoundation(suits[i]);
@@ -144,9 +148,11 @@ export default class Game {
 
     private initColumns(cards: Card[]): void {
         const cardsWithoutAces = cards.filter((card: Card) => card.value !== CardValue.Ace);
+
         for (let i = 0; i < 4; i++) {
             this._columns[i] = new Column(cardsWithoutAces.slice(i * 3, i * 3 + 3));
         }
+
         for (let i = 0; i < 9; i++) {
             this._columns[i + 4] = new Column(cardsWithoutAces.slice(12 + i * 4, 12 + i * 4 + 4));
         }
@@ -196,6 +202,7 @@ export default class Game {
 
         for (let i = 0; i < this._columns.length; i++){
             position = this._columns[i].findCardIndex(card);
+
             if (position !== null) {
                 return CardPosition.columnPosition(i, position);
             }
@@ -203,6 +210,7 @@ export default class Game {
 
         for (let i = 0; i < this._aceFoundations.length; i++){
             position = this._aceFoundations[i].findCardIndex(card);
+
             if (position !== null) {
                 return CardPosition.aceFoundationPosition(i, position);
             }
@@ -210,6 +218,7 @@ export default class Game {
 
         for (let i = 0; i < this._kingFoundations.length; i++){
             position = this._kingFoundations[i].findCardIndex(card);
+
             if (position !== null) {
                 return CardPosition.kingFoundationPosition(i, position);
             }

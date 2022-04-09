@@ -3,8 +3,8 @@ import Card from '../../core/Card';
 import CardStack from './CardStack';
 import CardValue, { getFullDeckDifference } from '../../core/CardValue';
 
-export default class KingFoundation extends CardStack{
-    constructor(
+export default class KingFoundation extends CardStack {
+    public constructor(
         private readonly _suit: CardSuit
     ) {
         super([]);
@@ -22,7 +22,7 @@ export default class KingFoundation extends CardStack{
         return getFullDeckDifference(card.value, this.topCard.value) === -1;
     }
 
-    public isCardAvailable(card: Card): boolean {
+    public isCardAvailable(_: Card): boolean {
         return false;
     }
 }

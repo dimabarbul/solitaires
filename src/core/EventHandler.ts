@@ -8,6 +8,7 @@
 
     public unsubscribe(listener: (event: T) => void): void {
         const index = this._listeners.indexOf(listener);
+
         if (index !== -1) {
             this._listeners.splice(index, 1);
         }

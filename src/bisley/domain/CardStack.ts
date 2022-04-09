@@ -1,9 +1,24 @@
 import Card, { areCardsEqual } from '../../core/Card';
 
 export default abstract class CardStack {
+    private readonly _cards: Card[];
+
     protected constructor(
-        private readonly _cards: Card[]
+        cards: Card[]
     ) {
+        this._cards = cards.slice(0, cards.length);
+    }
+
+    public get length(): number {
+        return this._cards.length;
+    }
+
+    protected get topCard(): Card {
+        if (this._cards.length === 0) {
+            throw new Error('Card stack is empty');
+        }
+
+        return this._cards[this._cards.length - 1];
     }
 
     public isCardAvailable(card: Card): boolean {
@@ -11,11 +26,10 @@ export default abstract class CardStack {
     }
 
     public pop(): Card {
-        if (this._cards.length === 0) {
-            throw new Error('CardStack is empty');
-        }
-
-        return this._cards.pop();
+        return this._cards.pop()
+            ?? ((): never => {
+                throw new Error('Card stack is empty');
+            })();
     }
 
     public push(card: Card): void {
@@ -40,17 +54,5 @@ export default abstract class CardStack {
         return this._cards.length === 0;
     }
 
-    protected get topCard(): Card {
-        if (this._cards.length === 0) {
-            throw new Error('CardStack is empty');
-        }
-
-        return this._cards[this._cards.length - 1];
-    }
-
-    public get length(): number {
-        return this._cards.length;
-    }
-
-    abstract canPush(card: Card): boolean;
+    public abstract canPush(card: Card): boolean;
 }

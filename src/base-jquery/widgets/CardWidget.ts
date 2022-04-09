@@ -6,7 +6,7 @@ import * as $ from 'jquery';
 import 'jqueryui';
 
 export default class CardWidget {
-    constructor(
+    public constructor(
         private readonly _gameService: GameService,
         private readonly _element: HTMLElement,
         private readonly _card: CardDto
@@ -20,18 +20,13 @@ export default class CardWidget {
         return this._card;
     }
 
-    private initElement(): void {
-        this._element.className = this.getClassName();
-        this._element.setAttribute('data-card', this._card.toString());
-    }
-
     public move(x: number, y: number): void {
         this._element.style.left = `${x}px`;
         this._element.style.top = `${y}px`;
     }
 
     public bringToFront(zLevel: number): void {
-        this._element.style.zIndex = '' + zLevel;
+        this._element.style.zIndex = zLevel.toString();
     }
 
     public enableDragAndDrop(): void  {
@@ -42,6 +37,11 @@ export default class CardWidget {
     public disableDragAndDrop(): void  {
         $(this._element).draggable('disable');
         $(this._element).droppable('disable');
+    }
+
+    private initElement(): void {
+        this._element.className = this.getClassName();
+        this._element.setAttribute('data-card', this._card.toString());
     }
 
     private getClassName(): string {

@@ -2,22 +2,22 @@
 import CardDto from '../dto/CardDto';
 
 export default class CardMovedEvent {
-    constructor(
+    public constructor(
         private readonly _card: CardDto,
         private readonly _from: CardPosition,
         private readonly _to: CardPosition
     ) {
     }
 
-    get card(): CardDto {
+    public get card(): CardDto {
         return this._card;
     }
 
-    get from(): CardPosition {
+    public get from(): CardPosition {
         return this._from;
     }
 
-    get to(): CardPosition {
+    public get to(): CardPosition {
         return this._to;
     }
 }

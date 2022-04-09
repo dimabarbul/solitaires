@@ -1,7 +1,7 @@
 import CardPositionType from './CardPositionType';
 
 export default class CardPosition {
-    constructor(
+    public constructor(
         private readonly _position: CardPositionType,
         private readonly _positionIndex: number,
         private readonly _index: number

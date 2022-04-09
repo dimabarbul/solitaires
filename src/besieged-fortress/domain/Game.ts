@@ -12,11 +12,11 @@ import ICommand from '../../core/ICommand';
 import Command from '../../core/Command';
 
 export default class Game {
-    private readonly _bases: Card[][] = new Array(4);
-    private readonly _rows: Card[][] = new Array(8);
-
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
     public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
+
+    private readonly _bases: Card[][] = new Array(4);
+    private readonly _rows: Card[][] = new Array(8);
 
     public start(cards: Card[]): void {
         if (cards.length !== 36) {
@@ -112,15 +112,15 @@ export default class Game {
         const bases: BaseDto[] = [];
         const rows: RowDto[] = [];
 
-        for (let i = 0; i < this._bases.length; i++) {
+        for (const item of this._bases) {
             bases.push(new BaseDto(
-                this._bases[i]
+                item
                     .map(card => new CardDto(card.suit, card.value))));
         }
 
-        for (let i = 0; i < this._rows.length; i++) {
+        for (const item of this._rows) {
             rows.push(new RowDto(
-                this._rows[i]
+                item
                     .map(card => new CardDto(card.suit, card.value))));
         }
 
@@ -143,8 +143,9 @@ export default class Game {
         throw new Error(`Cannot find base for suit ${card.suit}`);
     }
 
-    private initBases(cards: Card[]) {
+    private initBases(cards: Card[]): void {
         let baseIndex = 0;
+
         for (const card of cards) {
             if (card.value === CardValue.Ace) {
                 this._bases[baseIndex++] = [card];
@@ -152,12 +153,14 @@ export default class Game {
         }
     }
 
-    private initRows(cards: Card[]) {
+    private initRows(cards: Card[]): void {
         let rowIndex = 0;
+
         for (const card of cards) {
             if (card.value !== CardValue.Ace) {
                 this._rows[rowIndex] ||= [];
                 this._rows[rowIndex].push(card);
+
                 if (this._rows[rowIndex].length === 4) {
                     rowIndex++;
                 }
@@ -185,7 +188,9 @@ export default class Game {
 
     private moveCardFromRowToBase(fromRowNumber: number, toBaseNumber: number): void {
         const card: Card = this._rows[fromRowNumber].pop()
-            || (() => { throw new Error(`Cannot move card from row ${fromRowNumber} to base ${toBaseNumber}: no card in the row.`) })();
+            ?? ((): never => {
+                throw new Error(`Cannot move card from row ${fromRowNumber} to base ${toBaseNumber}: no card in the row.`);
+            })();
         this._bases[toBaseNumber].push(card);
 
         this.onCardMoved.trigger(new CardMovedEvent(
@@ -196,7 +201,9 @@ export default class Game {
 
     private moveCardFromBaseToRow(fromBaseNumber: number, toRowNumber: number): void {
         const card: Card = this._bases[fromBaseNumber].pop()
-            || (() => { throw new Error(`Cannot move card from base ${fromBaseNumber} to row ${toRowNumber}: no card in the base.`) })();
+            ?? ((): never => {
+                throw new Error(`Cannot move card from base ${fromBaseNumber} to row ${toRowNumber}: no card in the base.`);
+            })();
         this._rows[toRowNumber].push(card);
 
         this.onCardMoved.trigger(new CardMovedEvent(

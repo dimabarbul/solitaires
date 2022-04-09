@@ -4,17 +4,17 @@ import CardStack from './CardStack';
 import CardValue, { getFullDeckDifference } from '../../core/CardValue';
 
 export default class AceFoundation extends CardStack {
-    constructor(
+    public constructor(
         private readonly _suit: CardSuit
     ) {
         super([new Card(_suit, CardValue.Ace)]);
     }
 
-    get suit(): CardSuit {
+    public get suit(): CardSuit {
         return this._suit;
     }
 
-    public isCardAvailable(card: Card): boolean {
+    public isCardAvailable(_: Card): boolean {
         return false;
     }
 

@@ -12,6 +12,10 @@ import History from '../../core/History';
 import ICommand from '../../core/ICommand';
 
 export default class GameService {
+    public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
+    public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
+    public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
+
     private _game: Game|null = null;
     private readonly _history: History = new History();
 
@@ -22,10 +26,6 @@ export default class GameService {
 
         return this._game;
     }
-
-    public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
-    public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
-    public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
     public start(cards: Card[]): void {
         this._game = new Game();
@@ -40,13 +40,12 @@ export default class GameService {
 
     public canMoveCard(card: CardDto): boolean {
         const cardPosition: CardPosition = this.getCardPosition(card);
+        const cardsDisposition = this.getCardsDisposition();
 
         switch (cardPosition.position) {
             case CardPositionType.Base:
                 return false;
             case CardPositionType.Row:
-                const cardsDisposition = this.getCardsDisposition();
-
                 return cardPosition.index === cardsDisposition.rows[cardPosition.positionIndex].cards.length - 1;
             default: throw new Error(`Unexpected card position type ${cardPosition.position}`);
         }
@@ -83,11 +82,12 @@ export default class GameService {
         return this.game.canMoveCardToAnyBase(this.getCardPosition(card).positionIndex);
     }
 
-    public moveCardToCard(sourceCard: CardDto, targetCard: CardDto) {
+    public moveCardToCard(sourceCard: CardDto, targetCard: CardDto): void {
         const sourceCardPosition: CardPosition = this.getCardPosition(sourceCard);
         const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
 
         let command: ICommand;
+
         if (targetCardPosition.position === CardPositionType.Base) {
             command = this.game.moveCardToBase(sourceCardPosition.positionIndex);
         } else {

@@ -3,7 +3,7 @@ import CardStack from './CardStack';
 import { getFullDeckDifference } from '../../core/CardValue';
 
 export default class Column extends CardStack{
-    constructor(cards: Card[]) {
+    public constructor(cards: Card[]) {
         super(cards);
     }
 
@@ -13,6 +13,7 @@ export default class Column extends CardStack{
         }
 
         const topCard = this.topCard;
+
         return topCard.suit === card.suit
             && Math.abs(getFullDeckDifference(card.value, topCard.value)) === 1;
     }

@@ -9,6 +9,7 @@ export function getRandomSuit(): CardSuit {
 
 export function getAnotherRandomSuit(existingSuit: CardSuit): CardSuit {
     let suit: CardSuit;
+
     do {
         suit = getRandomSuit();
     } while (suit === existingSuit);
@@ -21,12 +22,13 @@ export function getRandomValue(): CardValue {
         CardValue.Ace, CardValue.Two, CardValue.Three,
         CardValue.Four, CardValue.Five, CardValue.Six,
         CardValue.Seven, CardValue.Eight, CardValue.Nine,
-        CardValue.Ten, CardValue.Jack, CardValue.Queen, CardValue.King
+        CardValue.Ten, CardValue.Jack, CardValue.Queen, CardValue.King,
     ]);
 }
 
-export function getRandomElement<T>(array: T[]): T {
+export function getRandomElement<TElement>(array: TElement[]): TElement {
     const randomIndex = getRandomNumber(0, array.length - 1);
+
     return array[randomIndex];
 }
 
@@ -36,6 +38,7 @@ export function getRandomCard(): Card {
 
 export function getAnotherRandomCard(existingCard: Card): Card {
     let card: Card;
+
     do {
         card = getRandomCard();
     } while (areCardsEqual(card, existingCard));
@@ -51,41 +54,41 @@ export class DeckBuilder {
 
     private readonly _cards: Card[] = Deck.getFullDeck().cards;
 
-    constructor() {
+    public constructor() {
         this.moveCard(new Card(CardSuit.Diamonds, CardValue.Ace), 48);
         this.moveCard(new Card(CardSuit.Hearts, CardValue.Ace), 49);
         this.moveCard(new Card(CardSuit.Clubs, CardValue.Ace), 50);
         this.moveCard(new Card(CardSuit.Spades, CardValue.Ace), 51);
     }
 
-    public withAvailableCardInColumn(card: Card, columnNumber: number): DeckBuilder {
+    public withAvailableCardInColumn(card: Card, columnNumber: number): this {
         this.moveCard(card, this.getColumnStartIndex(columnNumber) + this.getColumnLength(columnNumber) - 1);
 
         return this;
     }
 
-    build(): Deck {
+    public build(): Deck {
         return new Deck(this._cards, false);
     }
 
-    withCardInColumnAt(card: Card, columnNumber: number, number: number): DeckBuilder {
+    public withCardInColumnAt(card: Card, columnNumber: number, number: number): this {
         this.moveCard(card, this.getColumnStartIndex(columnNumber) + number);
 
         return this;
     }
 
-    withUnavailableCard(card: Card): DeckBuilder {
+    public withUnavailableCard(card: Card): this {
         return this.withUnavailableCardInColumn(card, getRandomNumber(0, 12));
     }
 
-    withUnavailableCardInColumn(card: Card, columnNumber: number): DeckBuilder {
+    public withUnavailableCardInColumn(card: Card, columnNumber: number): this {
         const cardNumber = getRandomNumber(0, this.getColumnLength(columnNumber) - 2);
         this.moveCard(card, this.getColumnStartIndex(columnNumber) + cardNumber);
 
         return this;
     }
 
-    withAvailableCard(card: Card): DeckBuilder {
+    public withAvailableCard(card: Card): this {
         const columnNumber = getRandomNumber(0, 13);
         this.moveCard(card, this.getColumnStartIndex(columnNumber) + this.getColumnLength(columnNumber) - 1);
 
@@ -94,6 +97,7 @@ export class DeckBuilder {
 
     private moveCard(card: Card, toNumber: number): void {
         const cardNumber = this.findCard(card);
+
         if (cardNumber !== toNumber) {
             [this._cards[toNumber], this._cards[cardNumber]] = [this._cards[cardNumber], this._cards[toNumber]];
         }

@@ -1,0 +1,38 @@
+@import './variables';
+
+.card-stack {
+  position: absolute;
+  z-index: 0;
+  width: $cards-width;
+  height: $cards-height;
+}
+
+@for $i from 0 through 3 {
+  .card-stack-#{$i} {
+    top: $top + $cards-height + $cards-vertical-margin;
+    left: $left + $i * ($cards-width + $cards-horizontal-margin);
+    background-color: palegreen;
+  }
+}
+
+@for $i from 4 through 7 {
+  .card-stack-#{$i} {
+    top: $top;
+    left: $left + ($i - 4) * ($cards-width + $cards-horizontal-margin);
+    background-color: palegreen;
+  }
+}
+
+@for $i from 8 through 11 {
+  .card-stack-#{$i} {
+    top: $top + 2 * ($cards-height + $cards-vertical-margin);
+    left: $left + ($i - 8) * ($cards-width + $cards-horizontal-margin);
+  }
+}
+
+@for $i from 12 through 20 {
+  .card-stack-#{$i} {
+    top: $top + $cards-height + $cards-vertical-margin;
+    left: $left + ($i - 8) * ($cards-width + $cards-horizontal-margin);
+  }
+}

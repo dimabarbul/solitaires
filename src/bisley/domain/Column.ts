@@ -1,14 +1,15 @@
 import Card from '../../core/Card';
 import CardStack from './CardStack';
 import { getFullDeckDifference } from '../../core/CardValue';
+import CardStackType from './CardStackType';
 
-export default class Column extends CardStack{
-    public constructor(cards: Card[]) {
-        super(cards);
+export default class Column extends CardStack<CardStackType> {
+    public constructor(id: number, cards: Card[]) {
+        super(id, CardStackType.Column, cards);
     }
 
     public canPush(card: Card): boolean {
-        if (this.isEmpty()) {
+        if (this.isEmpty) {
             return false;
         }
 

@@ -40,10 +40,11 @@ export default class Deck {
 
     private static createCards(values: CardValue[]): Card[] {
         const cards: Card[] = [];
+        let id: number = 1;
 
         for (const suit of Deck._suits) {
             for (const value of values) {
-                cards.push(new Card(suit, value));
+                cards.push(new Card(id++, suit, value));
             }
         }
 

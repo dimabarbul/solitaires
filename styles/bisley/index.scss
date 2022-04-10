@@ -1,0 +1,21 @@
+@import '../core';
+@import './card_stacks';
+@import './variables';
+
+#app {
+  width: 1000px;
+  height: 600px;
+}
+
+.undo,
+.redo {
+  top: $top;
+}
+
+.undo {
+  left: $left + 12 * ($cards-width + $cards-horizontal-margin);
+}
+
+.redo {
+  left: $left + 12 * ($cards-width + $cards-horizontal-margin) + $undo-redo-size;
+}

@@ -18,6 +18,17 @@
       "rules": {
         "@typescript-eslint/no-unused-expressions": "off"
       }
+    },
+    {
+      "files": "*.tsx",
+      "rules": {
+        "@typescript-eslint/consistent-type-assertions": [
+          "error",
+          {
+            "assertionStyle": "as"
+          }
+        ]
+      }
     }
   ],
   "rules": {
@@ -183,6 +194,7 @@
     "@typescript-eslint/no-confusing-non-null-assertion": "error",
     "@typescript-eslint/no-confusing-void-expression": "off",
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-extra-non-null-assertion": "error",
     "@typescript-eslint/no-extraneous-class": "error",
@@ -205,13 +217,24 @@
     "@typescript-eslint/prefer-literal-enum-member": "error",
     "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-readonly": "error",
-//    "@typescript-eslint/prefer-readonly-parameter-types": ["error", { "treatMethodsAsReadonly": true }],
     "@typescript-eslint/prefer-reduce-type-parameter": "error",
     "@typescript-eslint/prefer-return-this-type": "error",
     "@typescript-eslint/restrict-plus-operands": "error",
     "@typescript-eslint/strict-boolean-expressions": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
-    "@typescript-eslint/typedef": "error",
+    "@typescript-eslint/typedef": [
+      "error",
+      {
+        "arrayDestructuring": false,
+        "arrowParameter": false,
+        "memberVariableDeclaration": false,
+        "objectDestructuring": false,
+        "parameter": false,
+        "propertyDeclaration": false,
+        "variableDeclaration": false,
+        "variableDeclarationIgnoreFunction": false
+      }
+    ],
     "brace-style": "off",
     "@typescript-eslint/brace-style": ["error"],
     "comma-dangle": "off",

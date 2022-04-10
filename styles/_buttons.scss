@@ -7,6 +7,7 @@
   width: $undo-redo-size;
   height: $undo-redo-size;
   color: blue;
+  font-size: x-large;
 
   &::after {
     content: '\238c';

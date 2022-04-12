@@ -9,6 +9,7 @@ interface IDraggableProps {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default function Draggable(props: IDraggableProps): React.ReactElement {
+    // eslint-disable-next-line @typescript-eslint/typedef
     const [{ isDragging }, ref] = useDrag({
         type: props.type,
         item: {

@@ -11,9 +11,9 @@ export enum CardStackDirection {
 }
 
 export default class CardStackWidget {
-    private static readonly _xDelta = 25;
-    private static readonly _yDelta = 25;
-    private static readonly _baseZLevel = 0;
+    private static readonly _xDelta: number = 25;
+    private static readonly _yDelta: number = 25;
+    private static readonly _baseZLevel: number = 0;
 
     public constructor(
         protected readonly gameService: GameService,

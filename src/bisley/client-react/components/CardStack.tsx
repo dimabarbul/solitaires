@@ -30,9 +30,9 @@ export enum CardStackDirection {
 }
 
 export default class CardStack extends React.Component<ICardStackProps, ICardStackState> {
-    private static readonly _xDelta = 25;
-    private static readonly _yDelta = 25;
-    private static readonly _baseZLevel = 0;
+    private static readonly _xDelta: number = 25;
+    private static readonly _yDelta: number = 25;
+    private static readonly _baseZLevel: number = 0;
 
     public constructor(props: ICardStackProps) {
         super(props);

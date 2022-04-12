@@ -227,10 +227,10 @@
       {
         "arrayDestructuring": false,
         "arrowParameter": false,
-        "memberVariableDeclaration": false,
-        "objectDestructuring": false,
-        "parameter": false,
-        "propertyDeclaration": false,
+        "memberVariableDeclaration": true,
+        "objectDestructuring": true,
+        "parameter": true,
+        "propertyDeclaration": true,
         "variableDeclaration": false,
         "variableDeclarationIgnoreFunction": false
       }

@@ -5,12 +5,8 @@ import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
 import Card from '../../core/Card';
 import History from '../../core/History';
 import ICommand from '../../core/ICommand';
-import CardDto from '../domain/dto/CardDto';
 import CardPosition from '../domain/CardPosition';
-import CardStackDto from '../domain/dto/CardStackDto';
 import CardStackType from '../domain/CardStackType';
-
-/* eslint-disable */
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
@@ -106,12 +102,8 @@ export default class GameService {
     private getCardPosition(cardId: number): CardPosition {
         const cardsDisposition: CardsDispositionDto<CardStackType> = this.getCardsDisposition();
 
-        for (let i = 0; i < cardsDisposition.stacks.length; i++) {
-            const stack: CardStackDto<CardStackType> = cardsDisposition.stacks[i];
-
-            for (let j = 0; j < stack.cards.length; j++) {
-                const stackCard: CardDto = stack.cards[j];
-
+        for (const stack of cardsDisposition.stacks) {
+            for (const stackCard of stack.cards) {
                 if (stackCard.id === cardId) {
                     return new CardPosition(stack.id);
                 }

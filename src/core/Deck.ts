@@ -15,6 +15,7 @@ export default class Deck {
         CardValue.Eight, CardValue.Nine, CardValue.Ten,
         CardValue.Jack, CardValue.Queen, CardValue.King];
     private static readonly _shortDeckValuesInReverse: CardValue[] = Deck._shortDeckValues.reverse();
+    private static readonly _fullDeckValuesInReverse: CardValue[] = Deck._fullDeckValues.reverse();
 
     private readonly _cards: Card[];
 
@@ -32,6 +33,10 @@ export default class Deck {
 
     public static getShortDeck(): Deck {
         return new Deck(Deck.createCards(Deck._shortDeckValues));
+    }
+
+    public static getFullDeckInReverseOrder(): Deck {
+        return new Deck(Deck.createCards(Deck._fullDeckValuesInReverse), false);
     }
 
     public static getShortDeckInReverseOrder(): Deck {

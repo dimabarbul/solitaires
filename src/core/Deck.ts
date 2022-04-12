@@ -60,6 +60,13 @@ export default class Deck {
         return this._cards;
     }
 
+    public findCard(suit: CardSuit, value: CardValue): Card {
+        return this._cards.find((card: Card) => card.suit === suit && card.value === value)
+            ?? ((): never => {
+                throw new Error(`Card with suit ${suit} and value ${value} not found in deck`);
+            })();
+    }
+
     private shuffle(): void {
         for (let i = this._cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));

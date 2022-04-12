@@ -31,11 +31,8 @@ export enum CardStackDirection {
 
 export default class CardStack extends React.Component<ICardStackProps, ICardStackState> {
     private static readonly _xDelta = 25;
-    private static readonly _largeYDelta = 130;
     private static readonly _yDelta = 25;
     private static readonly _baseZLevel = 0;
-
-    private readonly _sparseCount: number;
 
     public constructor(props: ICardStackProps) {
         super(props);
@@ -43,7 +40,6 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
         this.state = {
             cards: props.cards.slice(0, props.cards.length),
         };
-        this._sparseCount = this.props.cards.length - 1;
     }
 
     private get className(): string {
@@ -114,18 +110,15 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
     }
 
     private getYDelta(index: number): number {
-        const sparseCount = Math.min(index, this._sparseCount);
-        const denseCount = Math.max(index - this._sparseCount, 0);
-
         switch (this.props.direction) {
             case CardStackDirection.None:
             case CardStackDirection.Left:
             case CardStackDirection.Right:
                 return 0;
             case CardStackDirection.Top:
-                return -(CardStack._largeYDelta * sparseCount + CardStack._yDelta * denseCount);
+                return -(index * CardStack._yDelta);
             case CardStackDirection.Bottom:
-                return CardStack._largeYDelta * sparseCount + CardStack._yDelta * denseCount;
+                return index * CardStack._yDelta;
         }
 
         throw new Error(`Unexpected direction ${this.props.direction}`);

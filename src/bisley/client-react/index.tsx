@@ -4,7 +4,7 @@ import App from './components/App';
 import Deck from '../../core/Deck';
 import GameService from '../application/GameService';
 
-const deck: Deck = Deck.getFullDeck();
+const deck: Deck = Deck.getFullDeckInReverseOrder();
 const gameService: GameService = new GameService();
 gameService.start(deck.cards);
 

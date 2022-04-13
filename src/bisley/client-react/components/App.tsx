@@ -5,8 +5,7 @@ import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
 import Congratulations from './Congratulations';
 import CardStackType from '../../domain/CardStackType';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import CardModel from '../models/CardModel';
 
 interface IAppProps {
     gameService: GameService
@@ -17,6 +16,7 @@ interface IAppState {
     isRedoDisabled: boolean
     isGameFinished: boolean
     cardsDisposition: CardsDispositionDto<CardStackType>
+    selectedCardId: number | null
 }
 
 export default class App extends React.Component<IAppProps, IAppState> {
@@ -28,6 +28,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
             isRedoDisabled: true,
             isGameFinished: false,
             cardsDisposition: props.gameService.getCardsDisposition(),
+            selectedCardId: null,
         };
 
         this.initEvents();
@@ -40,7 +41,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
         const cardsDisposition: CardsDispositionDto<CardStackType> = this.state.cardsDisposition;
 
-        return <DndProvider backend={HTML5Backend}>
+        return (
             <div>
                 <button className="undo" onClick={this.onUndoClick.bind(this)} disabled={this.state.isUndoDisabled} />
                 <button className="redo" onClick={this.onRedoClick.bind(this)} disabled={this.state.isRedoDisabled} />
@@ -49,43 +50,59 @@ export default class App extends React.Component<IAppProps, IAppState> {
                         <CardStack
                             key={'card-stack' + s.id.toString()}
                             id={s.id}
-                            cards={s.cards}
+                            cards={s.cards.map(c => new CardModel(c, c.id === this.state.selectedCardId))}
                             direction={s.type === CardStackType.Column ? CardStackDirection.Bottom : CardStackDirection.None}
-                            canDropCardOnCard={this.canDropCardOnCard.bind(this)}
-                            canDropCardOnStack={this.canDropCardOnStack.bind(this)}
-                            onCardDroppedOnStack={this.onCardDroppedOnStack.bind(this)}
-                            onCardDroppedOnCard={this.onCardDroppedOnCard.bind(this)}
+                            onStackClick={this.onStackClick.bind(this)}
+                            onCardClick={this.onCardClick.bind(this)}
                             onCardDoubleClick={this.onCardDoubleClick.bind(this)} />
                     )
                 }
             </div>
-        </DndProvider>;
+        );
     }
 
-    private onCardDroppedOnCard(droppedCardId: number, targetCardId: number): void {
-        if (this.props.gameService.canMoveCardToCard(droppedCardId, targetCardId)) {
-            this.props.gameService.moveCardToCard(droppedCardId, targetCardId);
+    private onStackClick(stackId: number): void {
+        if (this.state.selectedCardId === null) {
+            return;
         }
+
+        if (this.props.gameService.canMoveCardToStack(this.state.selectedCardId, stackId)) {
+            this.props.gameService.moveCardToStack(this.state.selectedCardId, stackId);
+        }
+
+        this.setState({
+            selectedCardId: null,
+        });
+    }
+
+    private onCardClick(cardId: number): void {
+        if (this.state.selectedCardId === null) {
+            this.setState({
+                selectedCardId: cardId,
+            });
+
+            return;
+        }
+
+        if (this.props.gameService.canMoveCardToCard(this.state.selectedCardId, cardId)) {
+            this.props.gameService.moveCardToCard(this.state.selectedCardId, cardId);
+        }
+
+        this.setState({
+            selectedCardId: null,
+        });
     }
 
     private onCardDoubleClick(cardId: number): void {
         if (this.props.gameService.canMoveCardToAnyFoundation(cardId)) {
             this.props.gameService.moveCardToAnyFoundation(cardId);
         }
-    }
 
-    private onCardDroppedOnStack(droppedCardId: number, stackId: number): void {
-        if (this.props.gameService.canMoveCardToStack(droppedCardId, stackId)) {
-            this.props.gameService.moveCardToStack(droppedCardId, stackId);
+        if (this.state.selectedCardId !== null) {
+            this.setState({
+                selectedCardId: null,
+            });
         }
-    }
-
-    private canDropCardOnStack(cardId: number, stackId: number): boolean {
-        return this.props.gameService.canMoveCardToStack(cardId, stackId);
-    }
-
-    private canDropCardOnCard(droppedCardId: number, targetCardId: number): boolean {
-        return this.props.gameService.canMoveCardToCard(droppedCardId, targetCardId);
     }
 
     private initEvents(): void {

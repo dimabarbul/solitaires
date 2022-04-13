@@ -23,8 +23,6 @@
     "jqueryui": "^1.11.1",
     "mocha": "^9.2.2",
     "react": "^18.0.0",
-    "react-dnd": "^16.0.0",
-    "react-dnd-html5-backend": "^16.0.0",
     "react-dom": "^18.0.0",
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",

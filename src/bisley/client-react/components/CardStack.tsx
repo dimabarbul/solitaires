@@ -1,24 +1,19 @@
 import * as React from 'react';
-import CardDto from '../../domain/dto/CardDto';
 import Card from './Card';
-import { ReactElement } from 'react';
 import Point3D from '../../../core/Point3D';
-import Draggable from './Draggable';
-import DropZone from './DropZone';
+import CardModel from '../models/CardModel';
 
 interface ICardStackProps {
     id: number
-    cards: readonly CardDto[]
+    cards: readonly CardModel[]
     direction: CardStackDirection
-    canDropCardOnCard(droppedCardId: number, targetCardId: number): boolean
-    canDropCardOnStack(cardId: number, stackId: number): boolean
-    onCardDroppedOnStack(droppedCardId: number, stackId: number): void
-    onCardDroppedOnCard(droppedCardId: number, targetCardId: number): void
     onCardDoubleClick(cardId: number): void
+    onCardClick(cardId: number): void
+    onStackClick(stackId: number): void
 }
 
 interface ICardStackState {
-    cards: CardDto[]
+    cards: CardModel[]
 }
 
 export enum CardStackDirection {
@@ -47,43 +42,23 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
     }
 
     public render(): React.ReactElement {
-        return <DropZone
-            acceptType="card"
-            canDrop={(droppedCardId: string): boolean => this.props.canDropCardOnStack(parseInt(droppedCardId), this.props.id)}
-            onDrop={(droppedCardId: string): void => this.props.onCardDroppedOnStack(parseInt(droppedCardId), this.props.id)}
-        >
-            <div className={this.className}>
+        return (
+            <div
+                className={this.className}
+                onClick={this.onClick.bind(this)}
+            >
                 {
                     this.props.cards
-                        .map((c: CardDto, index: number) => {
-                            const cardElement = <Card
-                                key={'card' + c.id.toString()}
+                        .map((c: CardModel, index: number) =>
+                            <Card
+                                key={'card' + c.card.id.toString()}
                                 card={c}
                                 point={this.getCardPosition(index)}
-                                onDoubleClick={this.props.onCardDoubleClick} />;
-                            const reactElement: ReactElement =
-                                c.isInteractable ?
-                                    <DropZone
-                                        key={'drop-zone-' + c.id.toString()}
-                                        acceptType="card"
-                                        canDrop={(droppedCardId: string): boolean => this.props.canDropCardOnCard.bind(this, parseInt(droppedCardId), c.id)}
-                                        onDrop={(droppedCardId: string): void => this.props.onCardDroppedOnCard.bind(this, parseInt(droppedCardId), c.id)}
-                                    >
-                                        <Draggable
-                                            key={'draggable-' + c.id.toString()}
-                                            id={c.id.toString()}
-                                            type="card"
-                                        >
-                                            {cardElement}
-                                        </Draggable>
-                                    </DropZone>:
-                                    cardElement;
-
-                            return reactElement;
-                        })
+                                onClick={(): void => this.props.onCardClick(c.card.id)}
+                                onDoubleClick={(): void => this.props.onCardDoubleClick(c.card.id)}/>)
                 }
             </div>
-        </DropZone>;
+        );
     }
 
     public getCardPosition(index: number): Point3D {
@@ -92,6 +67,12 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
             this.getYDelta(index),
             this.getZLevel(index)
         );
+    }
+
+    private onClick(): void {
+        if (this.props.cards.length === 0) {
+            this.props.onStackClick(this.props.id);
+        }
     }
 
     private getXDelta(index: number): number {

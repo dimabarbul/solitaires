@@ -1,5 +1,5 @@
-﻿import CardSuit, { suitToString } from '../../../core/CardSuit';
-import CardValue, { valueToString } from '../../../core/CardValue';
+﻿import CardSuit from '../../../core/CardSuit';
+import CardValue from '../../../core/CardValue';
 
 export default class CardDto {
     public constructor(
@@ -8,9 +8,5 @@ export default class CardDto {
         public readonly value: CardValue,
         public readonly isInteractable: boolean
     ) {
-    }
-
-    public toString(): string {
-        return `${valueToString(this.value)}-${suitToString(this.suit)}`;
     }
 }

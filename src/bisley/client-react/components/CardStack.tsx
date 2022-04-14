@@ -4,12 +4,13 @@ import Point3D from '../../../core/Point3D';
 import CardModel from '../models/CardModel';
 
 interface ICardStackProps {
-    id: number
+    index: number
+    type: string
     cards: readonly CardModel[]
     direction: CardStackDirection
     onCardDoubleClick(cardId: number): void
     onCardClick(cardId: number): void
-    onStackClick(stackId: number): void
+    onStackClick(): void
 }
 
 interface ICardStackState {
@@ -38,7 +39,7 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
     }
 
     private get className(): string {
-        return `card-stack card-stack-${this.props.id}`;
+        return `card-stack ${this.props.type}-${this.props.index}`;
     }
 
     public render(): React.ReactElement {
@@ -71,7 +72,7 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
 
     private onClick(): void {
         if (this.props.cards.length === 0) {
-            this.props.onStackClick(this.props.id);
+            this.props.onStackClick();
         }
     }
 

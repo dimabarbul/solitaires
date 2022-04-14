@@ -6,6 +6,7 @@ import CardMovedEvent from '../../domain/events/CardMovedEvent';
 import Congratulations from './Congratulations';
 import CardStackType from '../../domain/CardStackType';
 import CardModel from '../models/CardModel';
+import { from } from 'linq-to-typescript';
 
 interface IAppProps {
     gameService: GameService
@@ -46,16 +47,20 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <button className="undo" onClick={this.onUndoClick.bind(this)} disabled={this.state.isUndoDisabled} />
                 <button className="redo" onClick={this.onRedoClick.bind(this)} disabled={this.state.isRedoDisabled} />
                 {
-                    cardsDisposition.stacks.map(s =>
-                        <CardStack
-                            key={'card-stack' + s.id.toString()}
-                            id={s.id}
-                            cards={s.cards.map(c => new CardModel(c, c.id === this.state.selectedCardId))}
-                            direction={s.type === CardStackType.Column ? CardStackDirection.Bottom : CardStackDirection.None}
-                            onStackClick={this.onStackClick.bind(this)}
-                            onCardClick={this.onCardClick.bind(this)}
-                            onCardDoubleClick={this.onCardDoubleClick.bind(this)} />
-                    )
+                    from(cardsDisposition.stacks)
+                        .groupBy(s => s.type)
+                        .selectMany(g =>
+                            g.select((s, index) => (
+                                <CardStack
+                                    key={'card-stack-' + s.id.toString()}
+                                    index={index}
+                                    type={this.slugify(s.type)}
+                                    cards={s.cards.map(c => new CardModel(c, c.id === this.state.selectedCardId))}
+                                    direction={s.type === CardStackType.Column ? CardStackDirection.Bottom : CardStackDirection.None}
+                                    onStackClick={this.onStackClick.bind(this, s.id)}
+                                    onCardClick={this.onCardClick.bind(this)}
+                                    onCardDoubleClick={this.onCardDoubleClick.bind(this)} />
+                        )))
                 }
             </div>
         );
@@ -130,5 +135,9 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     private onRedoClick(): void {
         this.props.gameService.redo();
+    }
+
+    private slugify(type: CardStackType): string {
+        return CardStackType[type].toString().replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }

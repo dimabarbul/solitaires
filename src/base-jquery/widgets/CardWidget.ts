@@ -1,5 +1,5 @@
 ﻿import GameService from '../../besieged-fortress/application/GameService';
-import CardDto from '../../besieged-fortress/domain/dto/CardDto';
+import CardDto from '../../shared-kernel/dto/CardDto';
 import { valueToString } from '../../shared-kernel/CardValue';
 import { suitToString } from '../../shared-kernel/CardSuit';
 import * as $ from 'jquery';
@@ -41,7 +41,7 @@ export default class CardWidget {
 
     private initElement(): void {
         this._element.className = this.getClassName();
-        this._element.setAttribute('data-card', this._card.toString());
+        this._element.setAttribute('data-card-id', this._card.id.toString());
     }
 
     private getClassName(): string {
@@ -63,11 +63,6 @@ export default class CardWidget {
             revertDuration: 0,
             disabled: true,
             stack: '.playing-card',
-            // start: (event, ui) => {
-            //     const position = ui.helper.position();
-            //     $element.data('originLeft', position.left);
-            //     $element.data('originTop', position.top);
-            // },
         });
         $element.on('dragstart', (event, ui) => {
             const position = ui.helper.position();
@@ -75,34 +70,26 @@ export default class CardWidget {
             $element.data('originalTop', Math.round(position.top));
         });
 
-        $element.droppable({
-            // accept: ($el: JQuery): boolean => {
-            //     return this._gameService.canMoveCardToCard(CardDto.fromString($el.data('card')), this._card);
-            // },
-        });
+        $element.droppable({});
         $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
-            // console.log(
-            //     'drop',
-            //     CardDto.fromString(ui.draggable.data('card')).toString(),
-            //     this._card.toString(),
-            //     this._gameService.canMoveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card));
-            // console.log(ui.draggable.data('originalLeft'), ui.draggable.data('originalTop'));
-            if (!this._gameService.canMoveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card)) {
+            const droppedCardId = parseInt(ui.draggable.data('cardId'));
+
+            if (!this._gameService.canMoveCardToCard(droppedCardId, this._card.id)) {
                 ui.draggable.css('left', ui.draggable.data('originalLeft'));
                 ui.draggable.css('top', ui.draggable.data('originalTop'));
 
                 return;
             }
 
-            this._gameService.moveCardToCard(CardDto.fromString(ui.draggable.data('card')), this._card);
+            this._gameService.moveCardToCard(droppedCardId, this._card.id);
             event.stopPropagation();
         });
     }
 
     private initEvents(): void {
         this._element.addEventListener('dblclick', (_): void => {
-            if (this._gameService.canMoveCardToBase(this._card)) {
-                this._gameService.moveCardToBase(this._card);
+            if (this._gameService.canMoveCardToFoundation(this._card.id)) {
+                this._gameService.moveCardToFoundation(this._card.id);
             }
         });
     }

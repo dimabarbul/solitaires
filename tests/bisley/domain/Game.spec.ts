@@ -1,6 +1,6 @@
 import Game from '../../../src/bisley/domain/Game';
 import Deck from '../../../src/shared-kernel/Deck';
-import { DeckBuilder, getAnotherRandomSuit, getRandomCardValueNotAce, getRandomNumber, getRandomSuit } from './utils';
+import { DeckBuilder, random } from '../../utils';
 import Card from '../../../src/shared-kernel/Card';
 import CardValue from '../../../src/shared-kernel/CardValue';
 import CardMovedEvent from '../../../src/bisley/domain/events/CardMovedEvent';
@@ -27,9 +27,9 @@ describe('game', () => {
     });
     describe('can move', () => {
         it('true for top card in column', () => {
-            const columnNumber = getRandomNumber(0, 12);
-            const suit = getRandomSuit();
-            const value = getRandomCardValueNotAce();
+            const columnNumber = random.getRandomNumber(0, 12);
+            const suit = random.getRandomSuit();
+            const value = random.getRandomCardValueNotAce();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, value, columnNumber)
                 .build();
@@ -40,9 +40,9 @@ describe('game', () => {
             expect(game.canMove(card.id)).to.be.true;
         });
         it('false for not top card in column', () => {
-            const columnNumber = getRandomNumber(0, 12);
-            const suit = getRandomSuit();
-            const value = getRandomCardValueNotAce();
+            const columnNumber = random.getRandomNumber(0, 12);
+            const suit = random.getRandomSuit();
+            const value = random.getRandomCardValueNotAce();
             const deck: Deck = new DeckBuilder()
                 .withCardInColumnAt(suit, value, columnNumber, 1)
                 .build();
@@ -53,7 +53,7 @@ describe('game', () => {
             expect(game.canMove(card.id)).to.be.false;
         });
         it('false for top card in ace foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCard(suit, CardValue.Two)
                 .build();
@@ -65,7 +65,7 @@ describe('game', () => {
             expect(game.canMove(two.id)).to.be.false;
         });
         it('false for not top card in ace foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
@@ -83,12 +83,12 @@ describe('game', () => {
             const deck: Deck = Deck.getFullDeck();
             const game = new Game();
             game.start(deck.cards);
-            const ace = deck.findCard(getRandomSuit(), CardValue.Ace);
+            const ace = deck.findCard(random.getRandomSuit(), CardValue.Ace);
 
             expect(game.canMove(ace.id)).to.be.false;
         });
         it('false for top card in king foundation when there is only king', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCard(suit, CardValue.King)
                 .build();
@@ -100,7 +100,7 @@ describe('game', () => {
             expect(game.canMove(king.id)).to.be.false;
         });
         it('false for top card in king foundation when there are some cards', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.King, 1)
                 .withAvailableCardInColumn(suit, CardValue.Queen, 2)
@@ -115,7 +115,7 @@ describe('game', () => {
             expect(game.canMove(queen.id)).to.be.false;
         });
         it('false for not top card in king foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.King, 1)
                 .withAvailableCardInColumn(suit, CardValue.Queen, 2)
@@ -132,7 +132,7 @@ describe('game', () => {
     });
     describe('can move to any foundation', () => {
         it('false for unavailable card', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withUnavailableCard(suit, CardValue.Two)
                 .build();
@@ -143,7 +143,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(two.id)).to.be.false;
         });
         it('true for card in column able to be moved to ace foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCard(suit, CardValue.Two)
                 .build();
@@ -154,7 +154,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(two.id)).to.be.true;
         });
         it('true for card in column able to be moved to king foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCard(suit, CardValue.King)
                 .build();
@@ -165,7 +165,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(king.id)).to.be.true;
         });
         it('true for card in column able to be moved to ace foundation when there are some cards', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
@@ -179,7 +179,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(three.id)).to.be.true;
         });
         it('true for card in column able to be moved to king foundation when there are some cards', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck: Deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.King, 1)
                 .withAvailableCardInColumn(suit, CardValue.Queen, 2)
@@ -193,7 +193,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(queen.id)).to.be.true;
         });
         it('false for available card in ace foundation if can be moved to king foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const toKingFoundation: CardValue[] = [CardValue.King, CardValue.Queen, CardValue.Jack, CardValue.Ten, CardValue.Nine, CardValue.Eight];
             const toAceFoundation = [CardValue.Two, CardValue.Three, CardValue.Four, CardValue.Five, CardValue.Six, CardValue.Seven];
             const deckBuilder = new DeckBuilder();
@@ -214,7 +214,7 @@ describe('game', () => {
             expect(game.canMoveToAnyFoundation(seven.id)).to.be.false;
         });
         it('false for available card in king foundation if can be moved to ace foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const toKingFoundation: CardValue[] = [CardValue.King, CardValue.Queen, CardValue.Jack, CardValue.Ten, CardValue.Nine, CardValue.Eight];
             const toAceFoundation = [CardValue.Two, CardValue.Three, CardValue.Four, CardValue.Five, CardValue.Six, CardValue.Seven];
             const deckBuilder = new DeckBuilder();
@@ -237,8 +237,8 @@ describe('game', () => {
     });
     describe('move to any foundation', () => {
         it('correct event when moved to ace foundation', () => {
-            const suit = getRandomSuit();
-            const columnNumber = getRandomNumber(0, 12);
+            const suit = random.getRandomSuit();
+            const columnNumber = random.getRandomNumber(0, 12);
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, columnNumber)
                 .build();
@@ -259,8 +259,8 @@ describe('game', () => {
             expect(cardMovedEvent!.toStackId).to.be.in(aceFoundationIds);
         });
         it('correct event when moved to king foundation', () => {
-            const suit = getRandomSuit();
-            const columnNumber = getRandomNumber(0, 12);
+            const suit = random.getRandomSuit();
+            const columnNumber = random.getRandomNumber(0, 12);
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.King, columnNumber)
                 .build();
@@ -281,7 +281,7 @@ describe('game', () => {
             expect(cardMovedEvent!.toStackId).to.be.in(kingFoundationIds);
         });
         it('correct event when can be moved to either ace or king foundation', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const toKingFoundation: CardValue[] = [CardValue.King, CardValue.Queen, CardValue.Jack, CardValue.Ten, CardValue.Nine];
             const toAceFoundation = [CardValue.Two, CardValue.Three, CardValue.Four, CardValue.Five, CardValue.Six, CardValue.Seven];
             const eightColumnNumber = toKingFoundation.length + toAceFoundation.length;
@@ -319,7 +319,7 @@ describe('game', () => {
     });
     describe('can move to column', () => {
         it('false for unavailable card', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck = new DeckBuilder()
                 .withUnavailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
@@ -332,7 +332,7 @@ describe('game', () => {
             expect(game.canMoveToStack(two.id, columnId)).to.be.false;
         });
         it('true for next card of same suit', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
@@ -345,7 +345,7 @@ describe('game', () => {
             expect(game.canMoveToStack(three.id, columnId)).to.be.true;
         });
         it('true for previous card of same suit', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
@@ -358,12 +358,12 @@ describe('game', () => {
             expect(game.canMoveToStack(two.id, columnId)).to.be.true;
         });
         it('false for next card of different suit', () => {
-            const suit = getRandomSuit();
+            const suit = random.getRandomSuit();
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(suit, CardValue.Three, 2)
                 .build();
-            const three = deck.findCard(getAnotherRandomSuit(suit), CardValue.Three);
+            const three = deck.findCard(random.getAnotherRandomSuit(suit), CardValue.Three);
             const game = new Game();
             game.start(deck.cards);
 
@@ -371,8 +371,8 @@ describe('game', () => {
             expect(game.canMoveToStack(three.id, columnId)).to.be.false;
         });
         it('false for previous card of different suit', () => {
-            const suit = getRandomSuit();
-            const anotherSuit = getAnotherRandomSuit(suit);
+            const suit = random.getRandomSuit();
+            const anotherSuit = random.getAnotherRandomSuit(suit);
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, CardValue.Two, 1)
                 .withAvailableCardInColumn(anotherSuit, CardValue.Three, 2)
@@ -385,9 +385,9 @@ describe('game', () => {
             expect(game.canMoveToStack(two.id, columnId)).to.be.false;
         });
         it('false for empty column', () => {
-            const suit = getRandomSuit();
-            const value = getRandomCardValueNotAce();
-            const anotherSuit = getAnotherRandomSuit(suit);
+            const suit = random.getRandomSuit();
+            const value = random.getRandomCardValueNotAce();
+            const anotherSuit = random.getAnotherRandomSuit(suit);
             const deck = new DeckBuilder()
                 .withAvailableCardInColumn(suit, value, 1)
                 .withCardInColumnAt(anotherSuit, CardValue.Two, 2, 0)

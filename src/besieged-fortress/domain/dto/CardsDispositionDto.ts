@@ -1,18 +1,9 @@
-﻿import BaseDto from './BaseDto';
-import RowDto from './RowDto';
+﻿import CardStackDto from '../../../shared-kernel/dto/CardStackDto';
+import CardStackType from '../CardStackType';
 
 export default class CardsDispositionDto {
     public constructor(
-        private readonly _bases: BaseDto[],
-        private readonly _rows: RowDto[]
+        public readonly stacks: CardStackDto<CardStackType>[]
     ) {
-    }
-
-    public get bases(): BaseDto[] {
-        return this._bases;
-    }
-
-    public get rows(): RowDto[] {
-        return this._rows;
     }
 }

@@ -4,7 +4,7 @@ import { getFullDeckDifference } from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
 
 export default class Column extends CardStack<CardStackType> {
-    public constructor(id: number, cards: Card[]) {
+    public constructor(id: number, cards: readonly Card[]) {
         super(id, CardStackType.Column, cards);
     }
 

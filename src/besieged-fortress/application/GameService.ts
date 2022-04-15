@@ -2,11 +2,6 @@
 import EventHandler from '../../shared-kernel/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
-import CardDto from '../domain/dto/CardDto';
-import RowDto from '../domain/dto/RowDto';
-import CardPositionType from '../domain/CardPositionType';
-import BaseDto from '../domain/dto/BaseDto';
-import CardPosition from '../domain/CardPosition';
 import Card from '../../shared-kernel/Card';
 import History from '../../shared-kernel/History';
 import ICommand from '../../shared-kernel/ICommand';
@@ -38,72 +33,46 @@ export default class GameService {
         return this.game.getCardsDisposition();
     }
 
-    public canMoveCard(card: CardDto): boolean {
-        const cardPosition: CardPosition = this.getCardPosition(card);
-        const cardsDisposition = this.getCardsDisposition();
-
-        switch (cardPosition.position) {
-            case CardPositionType.Base:
-                return false;
-            case CardPositionType.Row:
-                return cardPosition.index === cardsDisposition.rows[cardPosition.positionIndex].cards.length - 1;
-            default: throw new Error(`Unexpected card position type ${cardPosition.position}`);
-        }
+    public canMoveCard(cardId: number): boolean {
+        return this.game.canMove(cardId);
     }
 
-    public canMoveCardToCard(sourceCard: CardDto, targetCard: CardDto): boolean {
-        if (!this.canMoveCard(sourceCard)) {
+    public canMoveCardToCard(sourceCardId: number, targetCardId: number): boolean {
+        if (!this.canMoveCard(sourceCardId)) {
             return false;
         }
 
-        const sourceCardPosition: CardPosition = this.getCardPosition(sourceCard);
-        const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
+        const targetStackId = this.getCardStackId(targetCardId);
 
-        if (sourceCardPosition.position === CardPositionType.Base) {
-            throw new Error(`Cannot move card from base: ${sourceCard.toString()}`);
-        }
-
-        if (targetCardPosition.position === CardPositionType.Base) {
-            return this.game.canMoveCardToBase(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
-        }
-
-        return this.game.canMoveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
+        return this.game.canMoveCardToStack(sourceCardId, targetStackId);
     }
 
-    public canMoveCardToEmptyRow(cardDto: CardDto, rowNumber: number): boolean {
-        return this.getCardPosition(cardDto).positionIndex !== rowNumber;
+    public canMoveCardToEmptyRow(cardId: number, stackId: number): boolean {
+        return this.game.canMoveCardToStack(cardId, stackId);
     }
 
-    public canMoveCardToBase(card: CardDto, baseIndex: number|null = null): boolean {
-        if (baseIndex !== null) {
-            return this.game.canMoveCardToBase(this.getCardPosition(card).positionIndex, baseIndex);
+    public canMoveCardToFoundation(cardId: number, foundationId: number|null = null): boolean {
+        if (foundationId !== null) {
+            return this.game.canMoveCardToStack(cardId, foundationId);
         }
 
-        return this.game.canMoveCardToAnyBase(this.getCardPosition(card).positionIndex);
+        return this.game.canMoveCardToAnyFoundation(cardId);
     }
 
-    public moveCardToCard(sourceCard: CardDto, targetCard: CardDto): void {
-        const sourceCardPosition: CardPosition = this.getCardPosition(sourceCard);
-        const targetCardPosition: CardPosition = this.getCardPosition(targetCard);
-
-        let command: ICommand;
-
-        if (targetCardPosition.position === CardPositionType.Base) {
-            command = this.game.moveCardToBase(sourceCardPosition.positionIndex);
-        } else {
-            command = this.game.moveCardToRow(sourceCardPosition.positionIndex, targetCardPosition.positionIndex);
-        }
+    public moveCardToCard(sourceCardId: number, targetCardId: number): void {
+        const targetStackId = this.getCardStackId(targetCardId);
+        const command = this.game.moveCardToStack(sourceCardId, targetStackId);
 
         this._history.pushCommand(command);
     }
 
-    public moveCardToEmptyRow(cardDto: CardDto, rowNumber: number): void {
-        const command: ICommand = this.game.moveCardToRow(this.getCardPosition(cardDto).positionIndex, rowNumber);
+    public moveCardToEmptyRow(cardId: number, stackId: number): void {
+        const command: ICommand = this.game.moveCardToStack(cardId, stackId);
         this._history.pushCommand(command);
     }
 
-    public moveCardToBase(card: CardDto): void {
-        const command: ICommand = this.game.moveCardToBase(this.getCardPosition(card).positionIndex);
+    public moveCardToFoundation(cardId: number): void {
+        const command: ICommand = this.game.moveCardToAnyFoundation(cardId);
         this._history.pushCommand(command);
     }
 
@@ -133,34 +102,18 @@ export default class GameService {
         return this._history.canMoveForward();
     }
 
-    private getCardPosition(card: CardDto): CardPosition {
+    private getCardStackId(cardId: number): number {
         const cardsDisposition: CardsDispositionDto = this.getCardsDisposition();
 
-        for (let i = 0; i < cardsDisposition.bases.length; i++) {
-            const base: BaseDto = cardsDisposition.bases[i];
-
-            for (let j = 0; j < base.cards.length; j++) {
-                const baseCard: CardDto = base.cards[j];
-
-                if (baseCard.equalsTo(card)) {
-                    return new CardPosition(CardPositionType.Base, i, j);
+        for (const stack of cardsDisposition.stacks) {
+            for (const baseCard of stack.cards) {
+                if (baseCard.id === cardId) {
+                    return stack.id;
                 }
             }
         }
 
-        for (let i = 0; i < cardsDisposition.rows.length; i++) {
-            const row: RowDto = cardsDisposition.rows[i];
-
-            for (let j = 0; j < row.cards.length; j++) {
-                const rowCard: CardDto = row.cards[j];
-
-                if (rowCard.equalsTo(card)) {
-                    return new CardPosition(CardPositionType.Row, i, j);
-                }
-            }
-        }
-
-        throw new Error(`Card ${card.value} ${card.suit} not found`);
+        throw new Error(`Card with id ${cardId} not found`);
     }
 
     private initEvents(): void {

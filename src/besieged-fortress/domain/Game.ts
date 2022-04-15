@@ -1,22 +1,22 @@
 ﻿import Card from '../../shared-kernel/Card';
-import CardDto from './dto/CardDto';
-import RowDto from './dto/RowDto';
-import CardPositionType from './CardPositionType';
 import CardMovedEvent from './events/CardMovedEvent';
 import CardsDispositionDto from './dto/CardsDispositionDto';
-import BaseDto from './dto/BaseDto';
-import CardPosition from './CardPosition';
-import CardValue, { getShortDeckDifference } from '../../shared-kernel/CardValue';
+import CardValue from '../../shared-kernel/CardValue';
 import EventHandler from '../../shared-kernel/EventHandler';
 import ICommand from '../../shared-kernel/ICommand';
 import Command from '../../shared-kernel/Command';
+import Foundation from './Foundation';
+import Row from './Row';
+import CardStack from '../../shared-kernel/CardStack';
+import CardStackType from './CardStackType';
 
 export default class Game {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
     public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
 
-    private readonly _bases: Card[][] = new Array(4);
-    private readonly _rows: Card[][] = new Array(8);
+    private readonly _foundations: Foundation[] = new Array(4);
+    private readonly _rows: Row[] = new Array(8);
+    private _stacks: { [key: number]: CardStack<CardStackType> } = {};
 
     public start(cards: Card[]): void {
         if (cards.length !== 36) {
@@ -24,73 +24,55 @@ export default class Game {
         }
 
         this.initEvents();
-        this.initBases(cards);
+        this.initFoundations(cards);
         this.initRows(cards);
+        this.fillStacks();
     }
 
-    public canMoveCardToAnyBase(fromRowNumber: number): boolean {
-        if (this._rows[fromRowNumber].length === 0) {
+    public canMove(cardId: number): boolean {
+        for (const stack of Object.values(this._stacks)) {
+            if (stack.isCardAvailable(cardId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public canMoveCardToAnyFoundation(cardId: number): boolean {
+        if (!this.canMove(cardId)) {
             return false;
         }
 
-        const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
+        const card: Card = this.getCard(cardId);
 
-        return this.canMoveCardToBase(fromRowNumber, this.getBaseNumber(rowCard));
+        return this._foundations.some(f => f.canPush(card))
     }
 
-    public canMoveCardToBase(fromRowNumber: number, toBaseNumber: number): boolean {
-        if (this._rows[fromRowNumber].length === 0) {
-            return false;
-        }
-
-        const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const baseCard: Card = this._bases[toBaseNumber][this._bases[toBaseNumber].length - 1];
-
-        return rowCard.suit === baseCard.suit
-            && getShortDeckDifference(rowCard.value, baseCard.value) === 1;
+    public canMoveCardToStack(cardId: number, stackId: number): boolean {
+        return this.canMove(cardId) && this._stacks[stackId].canPush(this.getCard(cardId));
     }
 
-    public canMoveCardToRow(fromRowNumber: number, toRowNumber: number): boolean {
-        if (this._rows[fromRowNumber].length === 0) {
-            return false;
+    public moveCardToAnyFoundation(cardId: number): ICommand {
+        if (!this.canMoveCardToAnyFoundation(cardId)) {
+            throw new Error(`Cannot move card ${cardId} to foundation`);
         }
 
-        if (this._rows[toRowNumber].length === 0) {
-            return true;
-        }
+        const targetStackId: number = this.getFoundationId(cardId);
 
-        const sourceCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const targetCard: Card = this._rows[toRowNumber][this._rows[toRowNumber].length - 1];
-
-        return getShortDeckDifference(sourceCard.value, targetCard.value) === -1;
+        return this.moveCardToStack(cardId, targetStackId);
     }
 
-    public moveCardToBase(fromRowNumber: number): ICommand {
-        if (!this.canMoveCardToAnyBase(fromRowNumber)) {
-            throw new Error(`Cannot move card to base: ${fromRowNumber}`);
+    public moveCardToStack(cardId: number, stackId: number): ICommand {
+        if (!this.canMoveCardToStack(cardId, stackId)) {
+            throw new Error(`Cannot move card ${cardId} to stack ${stackId}`);
         }
 
-        const rowCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-        const baseNumber: number = this.getBaseNumber(rowCard);
+        const sourceStackId: number = this.getCardStackId(cardId);
 
         const command: Command = new Command(
-            this.moveCardFromRowToBase.bind(this, fromRowNumber, baseNumber),
-            this.moveCardFromBaseToRow.bind(this, baseNumber, fromRowNumber),
-        );
-
-        command.execute();
-
-        return command;
-    }
-
-    public moveCardToRow(fromRowNumber: number, toRowNumber: number): ICommand {
-        if (!this.canMoveCardToRow(fromRowNumber, toRowNumber)) {
-            throw new Error(`Cannot move card to row: ${fromRowNumber} => ${toRowNumber}`);
-        }
-
-        const command: Command = new Command(
-            this.moveCardFromRowToRow.bind(this, fromRowNumber, toRowNumber),
-            this.moveCardFromRowToRow.bind(this, toRowNumber, fromRowNumber),
+            this.moveCardFromStackToStack.bind(this, sourceStackId, stackId),
+            this.moveCardFromStackToStack.bind(this, stackId, sourceStackId, false),
         );
 
         command.execute();
@@ -99,32 +81,12 @@ export default class Game {
     }
 
     public isGameFinished(): boolean {
-        for (let i = 0; i < 4; i++) {
-            if (this._bases[i].length !== 9) {
-                return false;
-            }
-        }
-
-        return true;
+        return this._rows.every(r => r.isEmpty);
     }
 
     public getCardsDisposition(): CardsDispositionDto {
-        const bases: BaseDto[] = [];
-        const rows: RowDto[] = [];
-
-        for (const item of this._bases) {
-            bases.push(new BaseDto(
-                item
-                    .map(card => new CardDto(card.suit, card.value))));
-        }
-
-        for (const item of this._rows) {
-            rows.push(new RowDto(
-                item
-                    .map(card => new CardDto(card.suit, card.value))));
-        }
-
-        return new CardsDispositionDto(bases, rows);
+        return new CardsDispositionDto(
+            Object.values(this._stacks).map(s => s.mapToDto()));
     }
 
     private initEvents(): void {
@@ -133,38 +95,45 @@ export default class Game {
         })
     }
 
-    private getBaseNumber(card: Card): number {
-        for (let i = 0; i < this._bases.length; i++) {
-            if (this._bases[i][0].suit === card.suit) {
-                return i;
-            }
+    private getFoundationId(cardId: number): number {
+        const card = this.getCard(cardId);
+
+        const foundation = this._foundations.find(f => f.suit === card.suit);
+
+        if (foundation === undefined) {
+            throw new Error(`Foundation not found for card ${cardId}`);
         }
 
-        throw new Error(`Cannot find base for suit ${card.suit}`);
+        return foundation.id;
     }
 
-    private initBases(cards: Card[]): void {
-        let baseIndex = 0;
+    private initFoundations(cards: Card[]): void {
+        let foundationIndex = 0;
 
         for (const card of cards) {
             if (card.value === CardValue.Ace) {
-                this._bases[baseIndex++] = [card];
+                this._foundations[foundationIndex] = new Foundation(foundationIndex, card);
+                foundationIndex++;
             }
         }
     }
 
     private initRows(cards: Card[]): void {
-        let rowIndex = 0;
+        const startId: number = this._foundations.length;
+        const cardsWithoutAces: Card[] = cards.filter(card => card.value !== CardValue.Ace);
 
-        for (const card of cards) {
-            if (card.value !== CardValue.Ace) {
-                this._rows[rowIndex] ||= [];
-                this._rows[rowIndex].push(card);
+        for (let i = 0; i < 8; i++) {
+            this._rows[i] = new Row(i + startId, cardsWithoutAces.slice(i * 4, (i + 1) * 4));
+        }
+    }
 
-                if (this._rows[rowIndex].length === 4) {
-                    rowIndex++;
-                }
-            }
+    private fillStacks(): void {
+        this._stacks = {};
+        const stacks = this._foundations.map(f => <CardStack<CardStackType>>f)
+            .concat(this._rows);
+
+        for (const stack of stacks) {
+            this._stacks[stack.id] = stack;
         }
     }
 
@@ -174,41 +143,35 @@ export default class Game {
         }
     }
 
-    private moveCardFromRowToRow(fromRowNumber: number, toRowNumber: number): void {
-        const sourceCard: Card = this._rows[fromRowNumber][this._rows[fromRowNumber].length - 1];
-
-        this._rows[toRowNumber].push(sourceCard);
-        this._rows[fromRowNumber].pop();
+    private moveCardFromStackToStack(sourceStackId: number, targetStackId: number, validateCard: boolean = true): void {
+        const card = this._stacks[sourceStackId].pop();
+        this._stacks[targetStackId].push(card, validateCard);
 
         this.onCardMoved.trigger(new CardMovedEvent(
-            CardDto.fromCard(sourceCard),
-            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
-            new CardPosition(CardPositionType.Row, toRowNumber, this._rows[toRowNumber].length - 1)));
+            card.id,
+            sourceStackId,
+            targetStackId));
     }
 
-    private moveCardFromRowToBase(fromRowNumber: number, toBaseNumber: number): void {
-        const card: Card = this._rows[fromRowNumber].pop()
-            ?? ((): never => {
-                throw new Error(`Cannot move card from row ${fromRowNumber} to base ${toBaseNumber}: no card in the row.`);
-            })();
-        this._bases[toBaseNumber].push(card);
+    private getCard(cardId: number): Card {
+        for (const stack of Object.values(this._stacks)) {
+            const card = stack.findCard(cardId);
 
-        this.onCardMoved.trigger(new CardMovedEvent(
-            CardDto.fromCard(card),
-            new CardPosition(CardPositionType.Row, fromRowNumber, this._rows[fromRowNumber].length),
-            new CardPosition(CardPositionType.Base, toBaseNumber, this._bases[toBaseNumber].length - 1)));
+            if (card !== null) {
+                return card;
+            }
+        }
+
+        throw new Error(`Cannot find card with id ${cardId}`);
     }
 
-    private moveCardFromBaseToRow(fromBaseNumber: number, toRowNumber: number): void {
-        const card: Card = this._bases[fromBaseNumber].pop()
-            ?? ((): never => {
-                throw new Error(`Cannot move card from base ${fromBaseNumber} to row ${toRowNumber}: no card in the base.`);
-            })();
-        this._rows[toRowNumber].push(card);
+    private getCardStackId(cardId: number): number {
+        for (const stack of Object.values(this._stacks)) {
+            if (stack.contains(cardId)) {
+                return stack.id;
+            }
+        }
 
-        this.onCardMoved.trigger(new CardMovedEvent(
-            CardDto.fromCard(card),
-            new CardPosition(CardPositionType.Base, fromBaseNumber, this._bases[fromBaseNumber].length),
-            new CardPosition(CardPositionType.Row, toRowNumber, this._rows[toRowNumber].length - 1)));
+        throw new Error(`Cannot find card with id ${cardId}`);
     }
 }

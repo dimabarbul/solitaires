@@ -1,16 +1,18 @@
-﻿import RowWidget from './RowWidget';
-import BaseWidget from './BaseWidget';
-import CardDto from '../../besieged-fortress/domain/dto/CardDto';
-import GameService from '../../besieged-fortress/application/GameService';
-import CardPositionType from '../../besieged-fortress/domain/CardPositionType';
-import CardMovedEvent from '../../besieged-fortress/domain/events/CardMovedEvent';
-import CardsDispositionDto from '../../besieged-fortress/domain/dto/CardsDispositionDto';
-import CardWidget from './CardWidget';
+﻿import CardStackWidget from '../../../base-jquery/widgets/CardStackWidget';
+import RowWidget from '../../../base-jquery/widgets/RowWidget';
+import CardStackDto from '../../../shared-kernel/dto/CardStackDto';
+import CardDto from '../../../shared-kernel/dto/CardDto';
+import FoundationWidget from '../../../base-jquery/widgets/FoundationWidget';
+import { from } from 'linq-to-typescript';
+import CardWidget from '../../../base-jquery/widgets/CardWidget';
+import GameService from '../../application/GameService';
+import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
+import CardStackType from '../../domain/CardStackType';
+import CardMovedEvent from '../../domain/events/CardMovedEvent';
 
 export default class AppWidget {
     private readonly _root: HTMLElement;
-    private readonly _bases: BaseWidget[] = new Array(4);
-    private readonly _rows: RowWidget[] = new Array(8);
+    private readonly _stacks: { [key: number]: CardStackWidget } = {};
 
     public constructor(private readonly _gameService: GameService, rootElementId: string) {
         this._root = document.getElementById(rootElementId)
@@ -26,26 +28,28 @@ export default class AppWidget {
     }
 
     private createStacks(cardsDisposition: CardsDispositionDto): void {
-        for (let i = 0; i < cardsDisposition.bases.length; i++) {
-            const cardStackElement: HTMLDivElement = document.createElement('div');
-            this._root.appendChild(cardStackElement);
+        const groupedStacks: CardStackDto<CardStackType>[][] =
+            from(cardsDisposition.stacks)
+                .groupBy(s => s.type)
+                .select(g => g.toArray())
+                .toArray();
 
-            const cardWidgets: CardWidget[] = this.createCards(cardsDisposition.bases[i].cards);
+        for (const stacks of groupedStacks) {
+            for (let i = 0; i < stacks.length; i++){
+                const stack = stacks[i];
+                const cardStackElement: HTMLDivElement = document.createElement('div');
+                this._root.appendChild(cardStackElement);
 
-            this._bases[i] = new BaseWidget(this._gameService, cardStackElement, i, cardWidgets);
-        }
+                const cardWidgets: CardWidget[] = this.createCards(stack.cards);
 
-        for (let i = 0; i < cardsDisposition.rows.length; i++) {
-            const cardStackElement: HTMLDivElement = document.createElement('div');
-            this._root.appendChild(cardStackElement);
-
-            const cardWidgets: CardWidget[] = this.createCards(cardsDisposition.rows[i].cards);
-
-            this._rows[i] = new RowWidget(this._gameService, cardStackElement, i, cardWidgets);
+                this._stacks[stack.id] = stack.type === CardStackType.Foundation ?
+                    new FoundationWidget(this._gameService, cardStackElement, i, stack.id, cardWidgets) :
+                    new RowWidget(this._gameService, cardStackElement, i, stack.id, cardWidgets);
+            }
         }
     }
 
-    private createCards(cards: CardDto[]): CardWidget[] {
+    private createCards(cards: readonly CardDto[]): CardWidget[] {
         const cardWidgets: CardWidget[] = new Array(cards.length);
 
         for (let i = 0; i < cards.length; i++) {
@@ -82,15 +86,9 @@ export default class AppWidget {
 
     private initEvents(): void {
         this._gameService.onCardMoved.subscribe((e: CardMovedEvent): void => {
-            const cardWidget = e.from.position === CardPositionType.Row ?
-                this._rows[e.from.positionIndex].popCard() :
-                this._bases[e.from.positionIndex].popCard();
+            const cardWidget = this._stacks[e.fromStackId].popCard();
 
-            if (e.to.position === CardPositionType.Base) {
-                this._bases[e.to.positionIndex].pushCard(cardWidget);
-            } else {
-                this._rows[e.to.positionIndex].pushCard(cardWidget);
-            }
+            this._stacks[e.toStackId].pushCard(cardWidget);
         });
     }
 }

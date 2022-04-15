@@ -19,6 +19,7 @@ export default class CardStackWidget {
         protected readonly gameService: GameService,
         protected readonly element: HTMLElement,
         protected readonly index: number,
+        protected readonly id: number,
         protected readonly direction: CardStackDirection,
         protected readonly cards: CardWidget[]
     ) {

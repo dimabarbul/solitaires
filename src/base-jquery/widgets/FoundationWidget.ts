@@ -2,12 +2,11 @@
 import CardStackWidget, { CardStackDirection } from './CardStackWidget';
 import CardWidget from './CardWidget';
 import * as $ from 'jquery';
-import CardDto from '../../besieged-fortress/domain/dto/CardDto';
 
-export default class BaseWidget extends CardStackWidget {
+export default class FoundationWidget extends CardStackWidget {
 
-    public constructor(gameService: GameService, element: HTMLElement, index: number, cards: CardWidget[]) {
-        super(gameService, element, index, CardStackDirection.None, cards);
+    public constructor(gameService: GameService, element: HTMLElement, index: number, id: number, cards: CardWidget[]) {
+        super(gameService, element, index, id, CardStackDirection.None, cards);
 
         this.makeDroppable();
     }
@@ -24,16 +23,16 @@ export default class BaseWidget extends CardStackWidget {
         const $element = $(this.element);
         $element.droppable();
         $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
-            const droppedCard: CardDto = CardDto.fromString(ui.draggable.data('card'));
+            const droppedCardId: number = parseInt(ui.draggable.data('cardId'));
 
-            if (!this.gameService.canMoveCardToBase(droppedCard, this.index)) {
+            if (!this.gameService.canMoveCardToFoundation(droppedCardId, this.index)) {
                 ui.draggable.css('left', ui.draggable.data('originalLeft'));
                 ui.draggable.css('top', ui.draggable.data('originalTop'));
 
                 return;
             }
 
-            this.gameService.moveCardToBase(droppedCard);
+            this.gameService.moveCardToFoundation(droppedCardId);
         });
     }
 }

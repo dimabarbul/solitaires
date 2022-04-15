@@ -179,18 +179,13 @@ export default class Game {
     }
 
     private getCardPosition(cardId: number): CardPosition {
-        const card: Card = this.getCard(cardId);
-        let position: number | null;
-
         for (const stackId in this._stacks) {
-            position = this._stacks[stackId].findCardIndex(card);
-
-            if (position !== null) {
+            if (this._stacks[stackId].contains(cardId)) {
                 return new CardPosition(parseInt(stackId));
             }
         }
 
-        throw new Error(`Cannot find card ${card.toString()}`);
+        throw new Error(`Cannot find card ${cardId}`);
     }
 
     private moveFromStackToStack(fromStackId: number, toStackId: number, validateCard: boolean): void {
@@ -208,12 +203,8 @@ export default class Game {
     }
 
     private getCard(cardId: number): Card {
-        const stacks = this._aceFoundations.map(f => <CardStack<CardStackType>>f)
-            .concat(this._kingFoundations)
-            .concat(this._columns);
-
-        for (const stack of stacks) {
-            const card = stack.getCard(cardId);
+        for (const stack of Object.values(this._stacks)) {
+            const card = stack.findCard(cardId);
 
             if (card !== null) {
                 return card;

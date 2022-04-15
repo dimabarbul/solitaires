@@ -1,6 +1,6 @@
 import CardStack from '../../../src/shared-kernel/CardStack';
 import Card, { areCardsEqual } from '../../../src/shared-kernel/Card';
-import { getAnotherRandomCard, getRandomCard } from './utils';
+import { random } from '../../utils';
 import { expect } from 'chai';
 
 enum CardStackType {
@@ -28,30 +28,30 @@ describe('card stack', () => {
         it('false for empty stack', () => {
             const stack = new TestCardStack([]);
 
-            expect(stack.isCardAvailable(getRandomCard().id)).to.be.false;
+            expect(stack.isCardAvailable(random.getRandomCard().id)).to.be.false;
         });
         it('false when card is not in stack', () => {
-            const card = getRandomCard();
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card]);
 
-            expect(stack.isCardAvailable(getAnotherRandomCard(card).id)).to.be.false;
+            expect(stack.isCardAvailable(random.getAnotherRandomCard(card).id)).to.be.false;
         });
         it('false when card is not top one', () => {
-            const card: Card = getRandomCard();
-            const anotherCard: Card = getAnotherRandomCard(card);
+            const card: Card = random.getRandomCard();
+            const anotherCard: Card = random.getAnotherRandomCard(card);
             const stack = new TestCardStack([card, anotherCard]);
 
             expect(stack.isCardAvailable(card.id)).to.be.false;
         });
         it('true when card is the only one in stack', () => {
-            const card = getRandomCard();
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card]);
 
             expect(stack.isCardAvailable(card.id)).to.be.true;
         });
         it('true when card is top one', () => {
-            const card: Card = getRandomCard();
-            const anotherCard: Card = getAnotherRandomCard(card);
+            const card: Card = random.getRandomCard();
+            const anotherCard: Card = random.getAnotherRandomCard(card);
             const stack = new TestCardStack([card, anotherCard]);
 
             expect(stack.isCardAvailable(anotherCard.id)).to.be.true;
@@ -64,7 +64,7 @@ describe('card stack', () => {
             expect((() => stack.pop())).to.throw;
         });
         it('returns top card', () => {
-            const card = getRandomCard();
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card]);
 
             expect(areCardsEqual(stack.pop(), card)).to.be.true;
@@ -72,33 +72,39 @@ describe('card stack', () => {
     });
     describe('push', () => {
         it('throws when canPush returns false', () => {
-            const card = getRandomCard();
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card], false);
 
             expect((() => stack.push(card))).to.throw;
         });
         it('pushes card when canPush returns true', () => {
-            const card = getRandomCard();
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card], true);
             stack.push(card);
 
             expect(areCardsEqual(stack.pop(), card)).to.be.true;
         });
     });
-    describe('findCardIndex', () => {
-        it('returns null when card is not in stack', () => {
-            const card = getRandomCard();
+    describe('contains', () => {
+        it('false when card is not in stack', () => {
+            const card = random.getRandomCard();
             const stack = new TestCardStack([card]);
 
-            expect(stack.findCardIndex(getAnotherRandomCard(card))).to.be.null;
+            expect(stack.contains(random.getAnotherRandomCard(card).id)).to.be.false;
         });
-        it('returns index of card when card is in stack', () => {
-            const card = getRandomCard();
-            const anotherCard = getAnotherRandomCard(card);
+        it('true when card is top card', () => {
+            const card = random.getRandomCard();
+            const anotherCard = random.getAnotherRandomCard(card);
             const stack = new TestCardStack([card, anotherCard]);
 
-            expect(stack.findCardIndex(card)).to.equal(0);
-            expect(stack.findCardIndex(anotherCard)).to.equal(1);
+            expect(stack.contains(anotherCard.id)).to.true;
+        });
+        it('true when card is not top card', () => {
+            const card = random.getRandomCard();
+            const anotherCard = random.getAnotherRandomCard(card);
+            const stack = new TestCardStack([card, anotherCard]);
+
+            expect(stack.contains(card.id)).to.true;
         });
     });
 });

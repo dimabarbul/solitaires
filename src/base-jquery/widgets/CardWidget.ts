@@ -1,7 +1,7 @@
 ﻿import GameService from '../../besieged-fortress/application/GameService';
 import CardDto from '../../besieged-fortress/domain/dto/CardDto';
-import { valueToString } from '../../core/CardValue';
-import { suitToString } from '../../core/CardSuit';
+import { valueToString } from '../../shared-kernel/CardValue';
+import { suitToString } from '../../shared-kernel/CardSuit';
 import * as $ from 'jquery';
 import 'jqueryui';
 

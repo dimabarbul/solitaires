@@ -1,4 +1,4 @@
-﻿import Card from '../../core/Card';
+﻿import Card from '../../shared-kernel/Card';
 import CardDto from './dto/CardDto';
 import RowDto from './dto/RowDto';
 import CardPositionType from './CardPositionType';
@@ -6,10 +6,10 @@ import CardMovedEvent from './events/CardMovedEvent';
 import CardsDispositionDto from './dto/CardsDispositionDto';
 import BaseDto from './dto/BaseDto';
 import CardPosition from './CardPosition';
-import CardValue, { getShortDeckDifference } from '../../core/CardValue';
-import EventHandler from '../../core/EventHandler';
-import ICommand from '../../core/ICommand';
-import Command from '../../core/Command';
+import CardValue, { getShortDeckDifference } from '../../shared-kernel/CardValue';
+import EventHandler from '../../shared-kernel/EventHandler';
+import ICommand from '../../shared-kernel/ICommand';
+import Command from '../../shared-kernel/Command';
 
 export default class Game {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();

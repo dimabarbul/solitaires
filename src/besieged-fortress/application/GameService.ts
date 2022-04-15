@@ -1,5 +1,5 @@
 ﻿import Game from '../domain/Game';
-import EventHandler from '../../core/EventHandler';
+import EventHandler from '../../shared-kernel/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
 import CardDto from '../domain/dto/CardDto';
@@ -7,9 +7,9 @@ import RowDto from '../domain/dto/RowDto';
 import CardPositionType from '../domain/CardPositionType';
 import BaseDto from '../domain/dto/BaseDto';
 import CardPosition from '../domain/CardPosition';
-import Card from '../../core/Card';
-import History from '../../core/History';
-import ICommand from '../../core/ICommand';
+import Card from '../../shared-kernel/Card';
+import History from '../../shared-kernel/History';
+import ICommand from '../../shared-kernel/ICommand';
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();

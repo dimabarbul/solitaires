@@ -1,5 +1,5 @@
-﻿import CardSuit from '../../../core/CardSuit';
-import CardValue from '../../../core/CardValue';
+﻿import CardSuit from '../CardSuit';
+import CardValue from '../CardValue';
 
 export default class CardDto {
     public constructor(

@@ -1,4 +1,4 @@
-import Card, { areCardsEqual } from '../../core/Card';
+import Card, { areCardsEqual } from './Card';
 import CardStackDto from './dto/CardStackDto';
 import CardDto from './dto/CardDto';
 

@@ -1,9 +1,9 @@
 import KingFoundation from '../../../src/bisley/domain/KingFoundation';
 import { getAnotherRandomSuit, getRandomSuit } from './utils';
-import Card from '../../../src/core/Card';
-import CardValue from '../../../src/core/CardValue';
+import Card from '../../../src/shared-kernel/Card';
+import CardValue from '../../../src/shared-kernel/CardValue';
 import { expect } from 'chai';
-import CardSuit from '../../../src/core/CardSuit';
+import CardSuit from '../../../src/shared-kernel/CardSuit';
 
 let foundationId = 1;
 let cardId = 1;

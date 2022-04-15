@@ -1,8 +1,8 @@
 import Game from '../../../src/bisley/domain/Game';
-import Deck from '../../../src/core/Deck';
+import Deck from '../../../src/shared-kernel/Deck';
 import { DeckBuilder, getAnotherRandomSuit, getRandomCardValueNotAce, getRandomNumber, getRandomSuit } from './utils';
-import Card from '../../../src/core/Card';
-import CardValue from '../../../src/core/CardValue';
+import Card from '../../../src/shared-kernel/Card';
+import CardValue from '../../../src/shared-kernel/CardValue';
 import CardMovedEvent from '../../../src/bisley/domain/events/CardMovedEvent';
 import '../../assertions';
 import { expect } from 'chai';

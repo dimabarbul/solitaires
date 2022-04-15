@@ -1,5 +1,5 @@
-import CardStack from '../../../src/bisley/domain/CardStack';
-import Card, { areCardsEqual } from '../../../src/core/Card';
+import CardStack from '../../../src/shared-kernel/CardStack';
+import Card, { areCardsEqual } from '../../../src/shared-kernel/Card';
 import { getAnotherRandomCard, getRandomCard } from './utils';
 import { expect } from 'chai';
 

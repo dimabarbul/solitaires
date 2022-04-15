@@ -1,8 +1,8 @@
 import AceFoundation from '../../../src/bisley/domain/AceFoundation';
-import Card from '../../../src/core/Card';
+import Card from '../../../src/shared-kernel/Card';
 import { getAnotherRandomSuit, getRandomCardNotAce, getRandomSuit } from './utils';
-import CardSuit from '../../../src/core/CardSuit';
-import CardValue from '../../../src/core/CardValue';
+import CardSuit from '../../../src/shared-kernel/CardSuit';
+import CardValue from '../../../src/shared-kernel/CardValue';
 import { expect } from 'chai';
 
 let foundationId = 1;

@@ -1,7 +1,7 @@
-import CardSuit from '../../core/CardSuit';
-import Card from '../../core/Card';
-import CardStack from './CardStack';
-import { getFullDeckDifference } from '../../core/CardValue';
+import CardSuit from '../../shared-kernel/CardSuit';
+import Card from '../../shared-kernel/Card';
+import CardStack from '../../shared-kernel/CardStack';
+import { getFullDeckDifference } from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
 
 export default class AceFoundation extends CardStack<CardStackType> {

@@ -60,7 +60,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                     onStackClick={this.onStackClick.bind(this, s.id)}
                                     onCardClick={this.onCardClick.bind(this)}
                                     onCardDoubleClick={this.onCardDoubleClick.bind(this)} />
-                        )))
+                            )))
                 }
             </div>
         );

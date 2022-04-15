@@ -1,6 +1,6 @@
-import Card from '../../core/Card';
-import CardStack from './CardStack';
-import { getFullDeckDifference } from '../../core/CardValue';
+import Card from '../../shared-kernel/Card';
+import CardStack from '../../shared-kernel/CardStack';
+import { getFullDeckDifference } from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
 
 export default class Column extends CardStack<CardStackType> {

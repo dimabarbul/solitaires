@@ -1,7 +1,7 @@
-import CardSuit from '../../../src/core/CardSuit';
-import CardValue from '../../../src/core/CardValue';
-import Card, { areCardsEqual } from '../../../src/core/Card';
-import Deck from '../../../src/core/Deck';
+import CardSuit from '../../../src/shared-kernel/CardSuit';
+import CardValue from '../../../src/shared-kernel/CardValue';
+import Card, { areCardsEqual } from '../../../src/shared-kernel/Card';
+import Deck from '../../../src/shared-kernel/Deck';
 
 let cardId = 1;
 

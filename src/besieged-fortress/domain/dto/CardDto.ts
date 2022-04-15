@@ -1,6 +1,6 @@
-﻿import CardSuit, { suitFromString, suitToString } from '../../../core/CardSuit';
-import CardValue, { valueFromString, valueToString } from '../../../core/CardValue';
-import Card from '../../../core/Card';
+﻿import CardSuit, { suitFromString, suitToString } from '../../../shared-kernel/CardSuit';
+import CardValue, { valueFromString, valueToString } from '../../../shared-kernel/CardValue';
+import Card from '../../../shared-kernel/Card';
 
 export default class CardDto {
     public constructor(

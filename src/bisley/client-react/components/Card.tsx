@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { valueToString } from '../../../core/CardValue';
-import { suitToString } from '../../../core/CardSuit';
-import Point3D from '../../../core/Point3D';
+import { valueToString } from '../../../shared-kernel/CardValue';
+import { suitToString } from '../../../shared-kernel/CardSuit';
+import Point3D from '../../../shared-kernel/Point3D';
 import CardModel from '../models/CardModel';
 
 interface ICardProps {

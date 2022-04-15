@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Card from './Card';
-import Point3D from '../../../core/Point3D';
+import Point3D from '../../../shared-kernel/Point3D';
 import CardModel from '../models/CardModel';
 
 interface ICardStackProps {

@@ -1,7 +1,7 @@
-import CardSuit from '../../core/CardSuit';
-import Card from '../../core/Card';
-import CardStack from './CardStack';
-import CardValue, { getFullDeckDifference } from '../../core/CardValue';
+import CardSuit from '../../shared-kernel/CardSuit';
+import Card from '../../shared-kernel/Card';
+import CardStack from '../../shared-kernel/CardStack';
+import CardValue, { getFullDeckDifference } from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
 
 export default class KingFoundation extends CardStack<CardStackType> {

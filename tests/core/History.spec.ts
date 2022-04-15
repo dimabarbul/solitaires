@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import History from '../../src/core/History';
-import ICommand from '../../src/core/ICommand';
+import History from '../../src/shared-kernel/History';
+import ICommand from '../../src/shared-kernel/ICommand';
 
 const command1: ICommand = {
     execute: () => {},

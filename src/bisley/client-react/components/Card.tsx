@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { valueToString } from '../../../shared-kernel/CardValue';
-import { suitToString } from '../../../shared-kernel/CardSuit';
 import Point3D from '../../../shared-kernel/Point3D';
 import CardModel from '../models/CardModel';
+import { ClassHelper } from '../../../shared-ui/ClassHelper';
 
 interface ICardProps {
     card: CardModel
@@ -16,9 +15,8 @@ interface ICardState {
 
 export default class Card extends React.Component<ICardProps, ICardState> {
     private get elementClass(): string {
-        return (this.props.card.isSelected ? 'selected' : '') +
-            ' playing-card ' +
-            `card-${valueToString(this.props.card.card.value)}-${suitToString(this.props.card.card.suit)}`;
+        return (this.props.card.isSelected ? 'selected ' : '')
+            + ClassHelper.card(this.props.card.card);
     }
 
     public render(): React.ReactElement {

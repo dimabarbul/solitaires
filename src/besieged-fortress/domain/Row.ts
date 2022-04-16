@@ -1,7 +1,7 @@
 ﻿import CardStack from '../../shared-kernel/CardStack';
 import CardStackType from './CardStackType';
 import Card from '../../shared-kernel/Card';
-import { getShortDeckDifference } from '../../shared-kernel/CardValue';
+import { CardExtensions } from './CardExtensions';
 
 export default class Row extends CardStack<CardStackType> {
     public constructor(id: number, cards: readonly Card[]) {
@@ -15,6 +15,6 @@ export default class Row extends CardStack<CardStackType> {
 
         const topCard: Card = this.topCard;
 
-        return getShortDeckDifference(card.value, topCard.value) === -1;
+        return CardExtensions.getCardValueDifference(card.value, topCard.value) === -1;
     }
 }

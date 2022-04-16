@@ -9,6 +9,7 @@ import GameService from '../../application/GameService';
 import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
 import CardStackType from '../../domain/CardStackType';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
+import { ClassHelper } from '../../../shared-ui/ClassHelper';
 
 export default class AppWidget {
     private readonly _root: HTMLElement;
@@ -64,12 +65,12 @@ export default class AppWidget {
     private createUndoRedoButtons(): void {
         const undoButton = document.createElement('button');
         undoButton.disabled = true;
-        undoButton.className = 'undo';
+        undoButton.className = ClassHelper.undo;
         this._root.appendChild(undoButton);
 
         const redoButton = document.createElement('button');
         redoButton.disabled = true;
-        redoButton.className = 'redo';
+        redoButton.className = ClassHelper.redo;
         this._root.appendChild(redoButton);
 
         undoButton.addEventListener('click', () => {

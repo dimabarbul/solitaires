@@ -1,5 +1,5 @@
 import CardStack from '../../../src/shared-kernel/CardStack';
-import Card, { areCardsEqual } from '../../../src/shared-kernel/Card';
+import Card from '../../../src/shared-kernel/Card';
 import { random } from '../../utils';
 import { expect } from 'chai';
 
@@ -67,7 +67,7 @@ describe('card stack', () => {
             const card = random.getRandomCard();
             const stack = new TestCardStack([card]);
 
-            expect(areCardsEqual(stack.pop(), card)).to.be.true;
+            expect(stack.pop()).to.equal(card);
         });
     });
     describe('push', () => {
@@ -82,7 +82,7 @@ describe('card stack', () => {
             const stack = new TestCardStack([card], true);
             stack.push(card);
 
-            expect(areCardsEqual(stack.pop(), card)).to.be.true;
+            expect(stack.pop()).to.equal(card);
         });
     });
     describe('contains', () => {

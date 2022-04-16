@@ -1,5 +1,5 @@
-﻿import CardSuit, { suitToString } from './CardSuit';
-import CardValue, { valueToString } from './CardValue';
+﻿import CardSuit from './CardSuit';
+import CardValue from './CardValue';
 
 export default class Card {
     public constructor(
@@ -10,10 +10,6 @@ export default class Card {
     }
 
     public toString(): string {
-        return `${valueToString(this.value)}${suitToString(this.suit)}`;
+        return `${CardValue[this.value]} of ${CardSuit[this.suit]}`;
     }
-}
-
-export function areCardsEqual(left: Card, right: Card): boolean {
-    return left.value === right.value && left.suit === right.suit;
 }

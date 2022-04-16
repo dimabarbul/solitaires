@@ -1,7 +1,7 @@
 import Card from '../../shared-kernel/Card';
 import CardStack from '../../shared-kernel/CardStack';
-import { getFullDeckDifference } from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
+import { CardExtensions } from './CardExtensions';
 
 export default class Column extends CardStack<CardStackType> {
     public constructor(id: number, cards: readonly Card[]) {
@@ -16,6 +16,6 @@ export default class Column extends CardStack<CardStackType> {
         const topCard = this.topCard;
 
         return topCard.suit === card.suit
-            && Math.abs(getFullDeckDifference(card.value, topCard.value)) === 1;
+            && Math.abs(CardExtensions.getCardValueDifference(card.value, topCard.value)) === 1;
     }
 }

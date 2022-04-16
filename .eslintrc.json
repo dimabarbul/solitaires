@@ -177,7 +177,7 @@
         "leadingUnderscore": "require"
       },
       {
-        "selector": ["class", "enum", "enumMember"],
+        "selector": ["class", "enum", "enumMember", "typeAlias"],
         "format": [ "PascalCase" ]
       },
       {

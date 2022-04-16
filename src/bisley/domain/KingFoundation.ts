@@ -1,8 +1,9 @@
 import CardSuit from '../../shared-kernel/CardSuit';
 import Card from '../../shared-kernel/Card';
 import CardStack from '../../shared-kernel/CardStack';
-import CardValue, { getFullDeckDifference } from '../../shared-kernel/CardValue';
+import CardValue from '../../shared-kernel/CardValue';
 import CardStackType from './CardStackType';
+import { CardExtensions } from './CardExtensions';
 
 export default class KingFoundation extends CardStack<CardStackType> {
     public constructor(
@@ -21,7 +22,7 @@ export default class KingFoundation extends CardStack<CardStackType> {
             return card.value === CardValue.King;
         }
 
-        return getFullDeckDifference(card.value, this.topCard.value) === -1;
+        return CardExtensions.getCardValueDifference(card.value, this.topCard.value) === -1;
     }
 
     public isCardAvailable(_: number): boolean {

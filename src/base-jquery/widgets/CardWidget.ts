@@ -1,7 +1,6 @@
 ﻿import GameService from '../../besieged-fortress/application/GameService';
 import CardDto from '../../shared-kernel/dto/CardDto';
-import { valueToString } from '../../shared-kernel/CardValue';
-import { suitToString } from '../../shared-kernel/CardSuit';
+import { ClassHelper } from '../../shared-ui/ClassHelper';
 import * as $ from 'jquery';
 import 'jqueryui';
 
@@ -40,20 +39,8 @@ export default class CardWidget {
     }
 
     private initElement(): void {
-        this._element.className = this.getClassName();
+        this._element.className = ClassHelper.card(this._card);
         this._element.setAttribute('data-card-id', this._card.id.toString());
-    }
-
-    private getClassName(): string {
-        return `playing-card card-${this.getValueClassNamePart()}-${this.getSuitClassNamePart()}`;
-    }
-
-    private getValueClassNamePart(): string {
-        return valueToString(this._card.value);
-    }
-
-    private getSuitClassNamePart(): string {
-        return suitToString(this._card.suit);
     }
 
     private initDragAndDrop(): void {

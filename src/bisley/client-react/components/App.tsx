@@ -7,6 +7,7 @@ import Congratulations from './Congratulations';
 import CardStackType from '../../domain/CardStackType';
 import CardModel from '../models/CardModel';
 import { from } from 'linq-to-typescript';
+import { ClassHelper } from '../../../shared-ui/ClassHelper';
 
 interface IAppProps {
     gameService: GameService
@@ -44,8 +45,8 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
         return (
             <div>
-                <button className="undo" onClick={this.onUndoClick.bind(this)} disabled={this.state.isUndoDisabled} />
-                <button className="redo" onClick={this.onRedoClick.bind(this)} disabled={this.state.isRedoDisabled} />
+                <button className={ClassHelper.undo} onClick={this.onUndoClick.bind(this)} disabled={this.state.isUndoDisabled} />
+                <button className={ClassHelper.redo} onClick={this.onRedoClick.bind(this)} disabled={this.state.isRedoDisabled} />
                 {
                     from(cardsDisposition.stacks)
                         .groupBy(s => s.type)

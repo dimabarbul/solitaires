@@ -1,6 +1,6 @@
 import CardSuit from '../src/shared-kernel/CardSuit';
 import CardValue from '../src/shared-kernel/CardValue';
-import Card, { areCardsEqual } from '../src/shared-kernel/Card';
+import Card from '../src/shared-kernel/Card';
 import Deck from '../src/shared-kernel/Deck';
 
 let cardId = 1;
@@ -44,7 +44,7 @@ export const random = {
 
         do {
             card = random.getRandomCard();
-        } while (areCardsEqual(card, existingCard));
+        } while (card.suit === existingCard.suit && card.value === existingCard.value);
 
         return card;
     },

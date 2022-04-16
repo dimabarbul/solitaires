@@ -5,9 +5,9 @@ const path = require('path');
 module.exports = {
     mode: 'development',
     entry: {
-        'besieged-fortress-jquery.js': './src/besieged-fortress/client-jquery/index.ts',
+        'besieged-fortress-jquery.js': './src/besieged-fortress/ui-jquery/index.ts',
         'besieged-fortress-styles.js': './styles/besieged-fortress/index.scss',
-        'bisley-react.js': './src/bisley/client-react/index.tsx',
+        'bisley-react.js': './src/bisley/ui-react/index.tsx',
         'bisley-styles.js': './styles/bisley/index.scss',
     },
     module: {

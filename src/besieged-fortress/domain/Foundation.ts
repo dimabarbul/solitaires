@@ -1,8 +1,8 @@
-﻿import CardStack from '../../shared-kernel/CardStack';
+﻿import CardStack from '../../shared/domain/CardStack';
 import CardStackType from './CardStackType';
-import Card from '../../shared-kernel/Card';
-import CardValue from '../../shared-kernel/CardValue';
-import CardSuit from '../../shared-kernel/CardSuit';
+import Card from '../../shared/domain/Card';
+import CardValue from '../../shared/domain/CardValue';
+import CardSuit from '../../shared/domain/CardSuit';
 import { CardExtensions } from './CardExtensions';
 
 export default class Foundation extends CardStack<CardStackType> {

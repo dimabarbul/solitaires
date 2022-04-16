@@ -1,0 +1,7 @@
+﻿@import './variables';
+
+.card-stack {
+  position: absolute;
+  width: $cards-width;
+  height: $cards-height;
+}

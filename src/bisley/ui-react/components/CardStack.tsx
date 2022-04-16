@@ -1,7 +1,8 @@
 import * as React from 'react';
 import Card from './Card';
-import Point3D from '../../../shared-kernel/Point3D';
+import Point3D from '../../../shared/domain/Point3D';
 import CardModel from '../models/CardModel';
+import { ClassHelper } from '../../../shared/ui/ClassHelper';
 
 interface ICardStackProps {
     index: number
@@ -39,7 +40,7 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
     }
 
     private get className(): string {
-        return `card-stack ${this.props.type}-${this.props.index}`;
+        return ClassHelper.stack(this.props.type, this.props.index);
     }
 
     public render(): React.ReactElement {

@@ -1,7 +1,7 @@
-import CardSuit from '../../shared-kernel/CardSuit';
-import Card from '../../shared-kernel/Card';
-import CardStack from '../../shared-kernel/CardStack';
-import CardValue from '../../shared-kernel/CardValue';
+import CardSuit from '../../shared/domain/CardSuit';
+import Card from '../../shared/domain/Card';
+import CardStack from '../../shared/domain/CardStack';
+import CardValue from '../../shared/domain/CardValue';
 import CardStackType from './CardStackType';
 import { CardExtensions } from './CardExtensions';
 

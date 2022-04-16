@@ -1,5 +1,5 @@
-import Card from '../../shared-kernel/Card';
-import CardStack from '../../shared-kernel/CardStack';
+import Card from '../../shared/domain/Card';
+import CardStack from '../../shared/domain/CardStack';
 import CardStackType from './CardStackType';
 import { CardExtensions } from './CardExtensions';
 

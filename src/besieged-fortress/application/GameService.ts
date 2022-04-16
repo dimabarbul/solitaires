@@ -1,10 +1,10 @@
 ﻿import Game from '../domain/Game';
-import EventHandler from '../../shared-kernel/EventHandler';
+import EventHandler from '../../shared/domain/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
-import Card from '../../shared-kernel/Card';
-import History from '../../shared-kernel/History';
-import ICommand from '../../shared-kernel/ICommand';
+import Card from '../../shared/domain/Card';
+import History from '../../shared/domain/History';
+import ICommand from '../../shared/domain/ICommand';
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
@@ -51,12 +51,12 @@ export default class GameService {
         return this.game.canMoveCardToStack(cardId, stackId);
     }
 
-    public canMoveCardToFoundation(cardId: number, foundationId: number|null = null): boolean {
-        if (foundationId !== null) {
-            return this.game.canMoveCardToStack(cardId, foundationId);
-        }
-
+    public canMoveCardToAnyFoundation(cardId: number): boolean {
         return this.game.canMoveCardToAnyFoundation(cardId);
+    }
+
+    public canMoveCardToFoundation(cardId: number, foundationId: number): boolean {
+        return this.game.canMoveCardToStack(cardId, foundationId);
     }
 
     public moveCardToCard(sourceCardId: number, targetCardId: number): void {
@@ -71,8 +71,13 @@ export default class GameService {
         this._history.pushCommand(command);
     }
 
-    public moveCardToFoundation(cardId: number): void {
+    public moveCardToAnyFoundation(cardId: number): void {
         const command: ICommand = this.game.moveCardToAnyFoundation(cardId);
+        this._history.pushCommand(command);
+    }
+
+    public moveCardToFoundation(cardId: number, foundationId: number): void {
+        const command: ICommand = this.game.moveCardToStack(cardId, foundationId);
         this._history.pushCommand(command);
     }
 
@@ -106,8 +111,8 @@ export default class GameService {
         const cardsDisposition: CardsDispositionDto = this.getCardsDisposition();
 
         for (const stack of cardsDisposition.stacks) {
-            for (const baseCard of stack.cards) {
-                if (baseCard.id === cardId) {
+            for (const card of stack.cards) {
+                if (card.id === cardId) {
                     return stack.id;
                 }
             }

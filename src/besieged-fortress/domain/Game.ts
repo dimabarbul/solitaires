@@ -1,13 +1,13 @@
-﻿import Card from '../../shared-kernel/Card';
+﻿import Card from '../../shared/domain/Card';
 import CardMovedEvent from './events/CardMovedEvent';
 import CardsDispositionDto from './dto/CardsDispositionDto';
-import CardValue from '../../shared-kernel/CardValue';
-import EventHandler from '../../shared-kernel/EventHandler';
-import ICommand from '../../shared-kernel/ICommand';
-import Command from '../../shared-kernel/Command';
+import CardValue from '../../shared/domain/CardValue';
+import EventHandler from '../../shared/domain/EventHandler';
+import ICommand from '../../shared/domain/ICommand';
+import Command from '../../shared/domain/Command';
 import Foundation from './Foundation';
 import Row from './Row';
-import CardStack from '../../shared-kernel/CardStack';
+import CardStack from '../../shared/domain/CardStack';
 import CardStackType from './CardStackType';
 
 export default class Game {
@@ -50,7 +50,9 @@ export default class Game {
     }
 
     public canMoveCardToStack(cardId: number, stackId: number): boolean {
-        return this.canMove(cardId) && this._stacks[stackId].canPush(this.getCard(cardId));
+        return this.canMove(cardId)
+            && !this._stacks[stackId].contains(cardId)
+            && this._stacks[stackId].canPush(this.getCard(cardId));
     }
 
     public moveCardToAnyFoundation(cardId: number): ICommand {

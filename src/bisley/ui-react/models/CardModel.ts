@@ -1,4 +1,4 @@
-import CardDto from '../../../shared-kernel/dto/CardDto';
+import CardDto from '../../../shared/domain/dto/CardDto';
 
 export default class CardModel {
     public constructor (

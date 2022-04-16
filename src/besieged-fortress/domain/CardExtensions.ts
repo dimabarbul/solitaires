@@ -1,4 +1,4 @@
-﻿import CardValue from '../../shared-kernel/CardValue';
+﻿import CardValue from '../../shared/domain/CardValue';
 
 type ShortDeckValues = CardValue.Ace | CardValue.Six | CardValue.Seven | CardValue.Eight | CardValue.Nine | CardValue.Ten | CardValue.Jack | CardValue.Queen | CardValue.King;
 

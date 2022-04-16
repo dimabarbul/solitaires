@@ -1,6 +1,6 @@
-﻿import CardSuit from '../shared-kernel/CardSuit';
-import CardValue from '../shared-kernel/CardValue';
-import CardDto from '../shared-kernel/dto/CardDto';
+﻿import CardSuit from '../domain/CardSuit';
+import CardValue from '../domain/CardValue';
+import CardDto from '../domain/dto/CardDto';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const ClassHelper = {
@@ -10,9 +10,15 @@ export const ClassHelper = {
     get redo(): string {
         return 'redo';
     },
+    get anyCard(): string {
+        return 'playing-card';
+    },
     card(card: CardDto): string {
-        return 'playing-card ' +
-            `playing-card-${valueToString(card.value)}-${suitToString(card.suit)}`
+        return ClassHelper.anyCard +
+            ` playing-card-${valueToString(card.value)}-${suitToString(card.suit)}`
+    },
+    stack(type: string, index: number): string {
+        return `card-stack ${slugify(type)}-${index}`;
     },
 }
 
@@ -62,4 +68,8 @@ function valueToString(value: CardValue): string {
     }
 
     throw new Error(`Unexpected card value ${value}`);
+}
+
+function slugify(s: string): string {
+    return s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }

@@ -7,7 +7,7 @@ import Congratulations from './Congratulations';
 import CardStackType from '../../domain/CardStackType';
 import CardModel from '../models/CardModel';
 import { from } from 'linq-to-typescript';
-import { ClassHelper } from '../../../shared-ui/ClassHelper';
+import { ClassHelper } from '../../../shared/ui/ClassHelper';
 
 interface IAppProps {
     gameService: GameService
@@ -55,7 +55,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                                 <CardStack
                                     key={'card-stack-' + s.id.toString()}
                                     index={index}
-                                    type={this.slugify(s.type)}
+                                    type={CardStackType[s.type].toString()}
                                     cards={s.cards.map(c => new CardModel(c, c.id === this.state.selectedCardId))}
                                     direction={s.type === CardStackType.Column ? CardStackDirection.Bottom : CardStackDirection.None}
                                     onStackClick={this.onStackClick.bind(this, s.id)}
@@ -136,9 +136,5 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     private onRedoClick(): void {
         this.props.gameService.redo();
-    }
-
-    private slugify(type: CardStackType): string {
-        return CardStackType[type].toString().replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }

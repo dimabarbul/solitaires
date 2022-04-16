@@ -1,7 +1,7 @@
 import Column from '../../../src/bisley/domain/Column';
 import { random } from '../../utils';
-import CardValue from '../../../src/shared-kernel/CardValue';
-import Card from '../../../src/shared-kernel/Card';
+import CardValue from '../../../src/shared/domain/CardValue';
+import Card from '../../../src/shared/domain/Card';
 import { expect } from 'chai';
 
 let columnId = 1;

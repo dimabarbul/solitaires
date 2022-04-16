@@ -1,5 +1,5 @@
 import GameService from '../application/GameService';
-import Deck from '../../shared-kernel/Deck';
+import Deck from '../../shared/domain/Deck';
 import AppWidget from './widgets/AppWidget';
 
 const deck: Deck = Deck.getShortDeck();

@@ -1,7 +1,7 @@
-import CardSuit from '../src/shared-kernel/CardSuit';
-import CardValue from '../src/shared-kernel/CardValue';
-import Card from '../src/shared-kernel/Card';
-import Deck from '../src/shared-kernel/Deck';
+import CardSuit from '../src/shared/domain/CardSuit';
+import CardValue from '../src/shared/domain/CardValue';
+import Card from '../src/shared/domain/Card';
+import Deck from '../src/shared/domain/Deck';
 
 let cardId = 1;
 

@@ -1,4 +1,4 @@
-﻿import CardValue from '../../shared-kernel/CardValue';
+﻿import CardValue from '../../shared/domain/CardValue';
 
 type CardValueDictionary = {
     [key in CardValue]: number;

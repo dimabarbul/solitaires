@@ -1,15 +1,12 @@
 ﻿@import './variables';
 
-.base {
-  position: absolute;
-  width: $cards-width;
-  height: $cards-height;
+.card-stack[class*="foundation-"] {
   left: $base-left;
   background-color: palegreen;
 }
 
 @for $i from 0 through 3 {
-  .base-#{$i} {
+  .card-stack.foundation-#{$i} {
     top: $top + $i * ($cards-height + $cards-margin);
   }
 }

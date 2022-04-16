@@ -1,4 +1,4 @@
-﻿import CardStackDto from '../../../shared-kernel/dto/CardStackDto';
+﻿import CardStackDto from '../../../shared/domain/dto/CardStackDto';
 import CardStackType from '../CardStackType';
 
 export default class CardsDispositionDto {

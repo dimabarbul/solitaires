@@ -1,5 +1,5 @@
-import CardStack from '../../../src/shared-kernel/CardStack';
-import Card from '../../../src/shared-kernel/Card';
+import CardStack from '../../../src/shared/domain/CardStack';
+import Card from '../../../src/shared/domain/Card';
 import { random } from '../../utils';
 import { expect } from 'chai';
 

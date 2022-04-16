@@ -1,10 +1,10 @@
 ﻿import Game from '../domain/Game';
-import EventHandler from '../../shared-kernel/EventHandler';
+import EventHandler from '../../shared/domain/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
-import Card from '../../shared-kernel/Card';
-import History from '../../shared-kernel/History';
-import ICommand from '../../shared-kernel/ICommand';
+import Card from '../../shared/domain/Card';
+import History from '../../shared/domain/History';
+import ICommand from '../../shared/domain/ICommand';
 import CardPosition from '../domain/CardPosition';
 import CardStackType from '../domain/CardStackType';
 

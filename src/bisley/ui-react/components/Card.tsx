@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Point3D from '../../../shared-kernel/Point3D';
+import Point3D from '../../../shared/domain/Point3D';
 import CardModel from '../models/CardModel';
-import { ClassHelper } from '../../../shared-ui/ClassHelper';
+import { ClassHelper } from '../../../shared/ui/ClassHelper';
 
 interface ICardProps {
     card: CardModel

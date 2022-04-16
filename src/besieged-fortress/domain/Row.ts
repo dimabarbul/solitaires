@@ -1,6 +1,6 @@
-﻿import CardStack from '../../shared-kernel/CardStack';
+﻿import CardStack from '../../shared/domain/CardStack';
 import CardStackType from './CardStackType';
-import Card from '../../shared-kernel/Card';
+import Card from '../../shared/domain/Card';
 import { CardExtensions } from './CardExtensions';
 
 export default class Row extends CardStack<CardStackType> {

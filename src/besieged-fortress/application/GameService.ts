@@ -1,10 +1,11 @@
 ﻿import Game from '../domain/Game';
 import EventHandler from '../../shared/libs/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
-import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
+import CardsDispositionDto from '../../shared/domain/dto/CardsDispositionDto';
 import Card from '../../shared/domain/Card';
 import History from '../../shared/libs/History';
 import { ICommand } from '../../shared/libs/Commands';
+import CardStackType from '../domain/CardStackType';
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
@@ -23,13 +24,12 @@ export default class GameService {
     }
 
     public start(cards: Card[]): void {
-        this._game = new Game();
+        this._game = new Game(cards);
         this._history.clear();
         this.initEvents();
-        this.game.start(cards);
     }
 
-    public getCardsDisposition(): CardsDispositionDto {
+    public getCardsDisposition(): CardsDispositionDto<CardStackType> {
         return this.game.getCardsDisposition();
     }
 
@@ -108,7 +108,7 @@ export default class GameService {
     }
 
     private getCardStackId(cardId: number): number {
-        const cardsDisposition: CardsDispositionDto = this.getCardsDisposition();
+        const cardsDisposition = this.getCardsDisposition();
 
         for (const stack of cardsDisposition.stacks) {
             for (const card of stack.cards) {

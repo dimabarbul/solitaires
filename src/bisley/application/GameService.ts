@@ -24,11 +24,10 @@ export default class GameService {
         return this._game;
     }
 
-    public start(cards: Card[]): void {
-        this._game = new Game();
+    public start(cards: readonly Card[]): void {
+        this._game = new Game(cards);
         this._history.clear();
         this.initEvents();
-        this.game.start(cards);
     }
 
     public getCardsDisposition(): CardsDispositionDto<CardStackType> {
@@ -46,30 +45,30 @@ export default class GameService {
 
         const targetCardPosition: CardPosition = this.getCardPosition(targetCardId);
 
-        return this.game.canMoveToStack(sourceCardId, targetCardPosition.stackId);
+        return this.game.canMoveCardToStack(sourceCardId, targetCardPosition.stackId);
     }
 
     public canMoveCardToStack(cardId: number, stackId: number): boolean {
-        return this.game.canMoveToStack(cardId, stackId);
+        return this.game.canMoveCardToStack(cardId, stackId);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
-        return this.game.canMoveToAnyFoundation(cardId);
+        return this.game.canMoveCardToAnyFoundation(cardId);
     }
 
     public moveCardToCard(sourceCardId: number, targetCardId: number): void {
         const targetCardPosition: CardPosition = this.getCardPosition(targetCardId);
-        const command: ICommand = this.game.moveToStack(sourceCardId, targetCardPosition.stackId);
+        const command: ICommand = this.game.moveCardToStack(sourceCardId, targetCardPosition.stackId);
         this._history.pushCommand(command);
     }
 
     public moveCardToStack(cardId: number, stackId: number): void {
-        const command: ICommand = this.game.moveToStack(cardId, stackId);
+        const command: ICommand = this.game.moveCardToStack(cardId, stackId);
         this._history.pushCommand(command);
     }
 
     public moveCardToAnyFoundation(cardId: number): void {
-        const command: ICommand = this.game.moveToAnyFoundation(cardId);
+        const command: ICommand = this.game.moveCardToAnyFoundation(cardId);
         this._history.pushCommand(command);
     }
 

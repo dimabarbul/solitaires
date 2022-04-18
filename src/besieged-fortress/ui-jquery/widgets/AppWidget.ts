@@ -4,7 +4,7 @@ import CardDto from '../../../shared/domain/dto/CardDto';
 import { from } from 'linq-to-typescript';
 import CardWidget from '../../../shared/ui-jquery/widgets/CardWidget';
 import GameService from '../../application/GameService';
-import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
+import CardsDispositionDto from '../../../shared/domain/dto/CardsDispositionDto';
 import CardStackType from '../../domain/CardStackType';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
 import { ClassHelper } from '../../../shared/ui/ClassHelper';
@@ -13,7 +13,7 @@ export default class AppWidget {
     private readonly _root: HTMLElement;
     private readonly _stacks: { [key: number]: CardStackWidget } = {};
 
-    private _cardsDisposition: CardsDispositionDto;
+    private _cardsDisposition: CardsDispositionDto<CardStackType>;
 
     public constructor(private readonly _gameService: GameService, rootElementId: string) {
         this._root = document.getElementById(rootElementId)

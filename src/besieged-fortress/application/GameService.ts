@@ -1,10 +1,10 @@
 ﻿import Game from '../domain/Game';
-import EventHandler from '../../shared/domain/EventHandler';
+import EventHandler from '../../shared/libs/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
 import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
 import Card from '../../shared/domain/Card';
-import History from '../../shared/domain/History';
-import ICommand from '../../shared/domain/ICommand';
+import History from '../../shared/libs/History';
+import { ICommand } from '../../shared/libs/Commands';
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();

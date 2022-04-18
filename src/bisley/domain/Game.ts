@@ -1,14 +1,13 @@
 import Card from '../../shared/domain/Card';
 import CardPosition from './CardPosition';
-import ICommand from '../../shared/domain/ICommand';
+import { ICommand, Command } from '../../shared/libs/Commands';
 import AceFoundation from './AceFoundation';
 import CardSuit from '../../shared/domain/CardSuit';
 import KingFoundation from './KingFoundation';
 import Column from './Column';
 import CardValue from '../../shared/domain/CardValue';
-import EventHandler from '../../shared/domain/EventHandler';
+import EventHandler from '../../shared/libs/EventHandler';
 import CardMovedEvent from './events/CardMovedEvent';
-import Command from '../../shared/domain/Command';
 import CardStack from '../../shared/domain/CardStack';
 import CardsDispositionDto from './dto/CardsDispositionDto';
 import CardStackType from './CardStackType';

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import History from '../../../src/shared/domain/History';
-import ICommand from '../../../src/shared/domain/ICommand';
+import History from '../../../src/shared/libs/History';
+import { ICommand } from '../../../src/shared/libs/Commands';
 
 const command1: ICommand = {
     execute: () => {},

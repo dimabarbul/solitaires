@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Card from './Card';
-import Point3D from '../../../shared/domain/Point3D';
+import { Point3D } from '../../../shared/libs/Points';
 import CardModel from '../models/CardModel';
 import { ClassHelper } from '../../../shared/ui/ClassHelper';
 

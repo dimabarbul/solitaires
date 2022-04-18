@@ -1,8 +1,7 @@
-﻿import ICommand from './ICommand';
-import EventHandler from './EventHandler';
+﻿import EventHandler from './EventHandler';
+import { ICommand } from './Commands';
 
 export default class History {
-
     public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
     private readonly _commands: ICommand[] = [];

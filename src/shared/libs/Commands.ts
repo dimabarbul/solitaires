@@ -1,6 +1,9 @@
-﻿import ICommand from './ICommand';
+﻿export interface ICommand {
+    execute(): void
+    undo(): void
+}
 
-export default class Command implements ICommand {
+export class Command implements ICommand {
     public constructor(
         private readonly _executeAction: () => void,
         private readonly _undoAction: () => void

@@ -2,9 +2,8 @@
 import CardMovedEvent from './events/CardMovedEvent';
 import CardsDispositionDto from './dto/CardsDispositionDto';
 import CardValue from '../../shared/domain/CardValue';
-import EventHandler from '../../shared/domain/EventHandler';
-import ICommand from '../../shared/domain/ICommand';
-import Command from '../../shared/domain/Command';
+import EventHandler from '../../shared/libs/EventHandler';
+import { ICommand, Command } from '../../shared/libs/Commands';
 import Foundation from './Foundation';
 import Row from './Row';
 import CardStack from '../../shared/domain/CardStack';

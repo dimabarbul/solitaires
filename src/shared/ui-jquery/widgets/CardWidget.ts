@@ -2,7 +2,7 @@
 import { ClassHelper } from '../../ui/ClassHelper';
 import * as $ from 'jquery';
 import 'jqueryui';
-import Point3D from '../../domain/Point3D';
+import { Point3D } from '../../libs/Points';
 
 export default class CardWidget {
     public constructor(

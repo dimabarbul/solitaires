@@ -2,7 +2,7 @@
 import * as $ from 'jquery';
 import { ClassHelper } from '../../ui/ClassHelper';
 import CardDto from '../../domain/dto/CardDto';
-import Point3D from '../../domain/Point3D';
+import { Point3D } from '../../libs/Points';
 
 export enum CardStackDirection {
     None = 0,

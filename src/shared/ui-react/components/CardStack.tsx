@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Card from './Card';
-import { Point3D } from '../../../shared/libs/Points';
+import { Point3D } from '../../libs/Points';
 import CardModel from '../models/CardModel';
-import { ClassHelper } from '../../../shared/ui/ClassHelper';
+import { ClassHelper } from '../../ui/ClassHelper';
 
 interface ICardStackProps {
     index: number

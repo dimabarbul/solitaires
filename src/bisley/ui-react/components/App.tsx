@@ -1,11 +1,11 @@
 import * as React from 'react';
-import CardStack, { CardStackDirection } from './CardStack';
+import CardStack, { CardStackDirection } from '../../../shared/ui-react/components/CardStack';
 import GameService from '../../application/GameService';
 import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
-import Congratulations from './Congratulations';
+import Congratulations from '../../../shared/ui-react/components/Congratulations';
 import CardStackType from '../../domain/CardStackType';
-import CardModel from '../models/CardModel';
+import CardModel from '../../../shared/ui-react/models/CardModel';
 import { from } from 'linq-to-typescript';
 import { ClassHelper } from '../../../shared/ui/ClassHelper';
 

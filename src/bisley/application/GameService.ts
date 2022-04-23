@@ -1,7 +1,7 @@
 ﻿import Game from '../domain/Game';
 import EventHandler from '../../shared/libs/EventHandler';
 import CardMovedEvent from '../domain/events/CardMovedEvent';
-import CardsDispositionDto from '../domain/dto/CardsDispositionDto';
+import CardsDispositionDto from '../../shared/domain/dto/CardsDispositionDto';
 import Card from '../../shared/domain/Card';
 import History from '../../shared/libs/History';
 import { ICommand } from '../../shared/libs/Commands';

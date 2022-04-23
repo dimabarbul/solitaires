@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CardStack, { CardStackDirection } from '../../../shared/ui-react/components/CardStack';
 import GameService from '../../application/GameService';
-import CardsDispositionDto from '../../domain/dto/CardsDispositionDto';
+import CardsDispositionDto from '../../../shared/domain/dto/CardsDispositionDto';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
 import Congratulations from '../../../shared/ui-react/components/Congratulations';
 import CardStackType from '../../domain/CardStackType';
@@ -82,6 +82,10 @@ export default class App extends React.Component<IAppProps, IAppState> {
     }
 
     private onCardClick(cardId: number): void {
+        if (!this.props.gameService.canMoveCard(cardId)) {
+            return;
+        }
+        
         if (this.state.selectedCardId === null) {
             this.setState({
                 selectedCardId: cardId,

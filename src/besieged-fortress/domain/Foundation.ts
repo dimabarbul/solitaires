@@ -23,4 +23,8 @@ export default class Foundation extends CardStack<CardStackType> {
 
         return topCard.suit === card.suit && CardExtensions.getCardValueDifference(card.value, topCard.value) === 1;
     }
+
+    public isCardAvailable(_: number): boolean {
+        return false;
+    }
 }

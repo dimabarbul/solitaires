@@ -115,6 +115,25 @@ export default class GameService {
         return this.history.canMoveForward();
     }
 
+    public autoBuild(): void {
+        let movedAnyCard: boolean;
+        
+        do {
+            movedAnyCard = false;
+            
+            const cardsDisposition = this.startedGame.getCardsDisposition();
+            
+            for (const stack of cardsDisposition.stacks) {
+                for (const card of stack.cards) {
+                    if (this.canMoveCardToAnyFoundation(card.id)) {
+                        this.moveCardToAnyFoundation(card.id);
+                        movedAnyCard = true;
+                    }
+                }
+            }
+        } while (movedAnyCard);
+    }
+
     private getCardStackId(cardId: number): number {
         const cardsDisposition = this.startedGame.getCardsDisposition();
 

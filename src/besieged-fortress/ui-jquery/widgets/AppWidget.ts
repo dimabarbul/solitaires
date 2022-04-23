@@ -48,7 +48,7 @@ export default class AppWidget {
         
         const autoBuildButton = document.createElement('button');
         autoBuildButton.innerText = 'Auto-build';
-        autoBuildButton.addEventListener('click', this.autoBuild.bind(this));
+        autoBuildButton.addEventListener('click', this.gameService.autoBuild.bind(this.gameService));
         
         autoBuildElement.appendChild(autoBuildButton);
         
@@ -205,22 +205,5 @@ export default class AppWidget {
     
     private setOrderViolationsCount(): void {
         this.orderViolationsElement.innerText = this.gameState.orderViolations.toString();
-    }
-    
-    private autoBuild(): void {
-        let movedAnyCard: boolean;
-
-        do {
-            movedAnyCard = false;
-            
-            for (const stack of this.gameState.cardsDisposition.stacks) {
-                for (const card of stack.cards) {
-                    if (this.gameService.canMoveCardToAnyFoundation(card.id)) {
-                        this.gameService.moveCardToAnyFoundation(card.id);
-                        movedAnyCard = true;
-                    }
-                }
-            }
-        } while (movedAnyCard);
     }
 }

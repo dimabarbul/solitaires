@@ -140,8 +140,9 @@ end
 ```
 
 Difference between application layer and domain layer can be seen in following examples:
-- application layer has methods `canMoveCardToCard` and `moveCardToCard` whereas domain layer does not provide such ability
-- application layer can provide methods from different domain objects, for example, `GameService` provides methods for undo/redo functionality (using `History` class) along with methods to play the game (using `Game` class)
+- application layer has methods `canMoveCardToCard` and `moveCardToCard` whereas domain layer does not provide such ability, so application layer does mapping to domain terms
+- application layer can provide methods that are completely outside of domain, for example, `GameService` provides methods for undo/redo functionality using `History` class not from domain
+- application layer can provide extra functionality to the game, for example, order-violations and auto-build features resides in application layer as they're part of game, but are not part of domain
 
 ### Building
 

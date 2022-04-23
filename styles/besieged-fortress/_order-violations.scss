@@ -1,0 +1,11 @@
+﻿@import './variables';
+
+.order-violations {
+  font-size: large;
+  position: absolute;
+  left: $undo-redo-size * 2 + 25px;
+  
+  &::before {
+    content: "Order Violations: ";
+  }
+}

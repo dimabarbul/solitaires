@@ -6,6 +6,7 @@ import Card from '../../shared/domain/Card';
 import History from '../../shared/libs/History';
 import { ICommand } from '../../shared/libs/Commands';
 import CardStackType from '../domain/CardStackType';
+import GameState from './dto/GameState';
 
 export default class GameService {
     public readonly onCardMoved: EventHandler<CardMovedEvent> = new EventHandler<CardMovedEvent>();
@@ -29,8 +30,10 @@ export default class GameService {
         this.initEvents();
     }
 
-    public getCardsDisposition(): CardsDispositionDto<CardStackType> {
-        return this.startedGame.getCardsDisposition();
+    public getGameState(): GameState {
+        const cardsDisposition = this.startedGame.getCardsDisposition();
+        
+        return new GameState(this.getOrderViolations(cardsDisposition), cardsDisposition);
     }
 
     public canMoveCard(cardId: number): boolean {
@@ -113,7 +116,7 @@ export default class GameService {
     }
 
     private getCardStackId(cardId: number): number {
-        const cardsDisposition = this.getCardsDisposition();
+        const cardsDisposition = this.startedGame.getCardsDisposition();
 
         for (const stack of cardsDisposition.stacks) {
             for (const card of stack.cards) {
@@ -133,7 +136,7 @@ export default class GameService {
     }
     
     private isStackEmpty(stackId: number): boolean {
-        const cardsDisposition = this.getCardsDisposition();
+        const cardsDisposition = this.startedGame.getCardsDisposition();
 
         for (const stack of cardsDisposition.stacks) {
             if (stack.id === stackId) {
@@ -142,5 +145,25 @@ export default class GameService {
         }
 
         throw new Error(`Stack with id ${stackId} not found`);
+    }
+
+    private getOrderViolations(cardsDisposition: CardsDispositionDto<CardStackType>): number {
+        let violations = 0;
+
+        for (const stack of cardsDisposition.stacks) {
+            if (stack.type !== CardStackType.Row) {
+                continue;
+            }
+            
+            for (let i = 0; i < stack.cards.length; i++) {
+                for (let j = i + 1; j < stack.cards.length; j++) {
+                    if (stack.cards[i].value < stack.cards[j].value) {
+                        violations++;
+                    }
+                }
+            }
+        }
+
+        return violations;
     }
 }

@@ -4,16 +4,17 @@ import CardDto from '../../../shared/domain/dto/CardDto';
 import { from } from 'linq-to-typescript';
 import CardWidget from '../../../shared/ui-jquery/widgets/CardWidget';
 import GameService from '../../application/GameService';
-import CardsDispositionDto from '../../../shared/domain/dto/CardsDispositionDto';
 import CardStackType from '../../domain/CardStackType';
 import CardMovedEvent from '../../domain/events/CardMovedEvent';
 import { ClassHelper } from '../../../shared/ui/ClassHelper';
+import GameState from '../../application/dto/GameState';
 
 export default class AppWidget {
     private readonly root: HTMLElement;
+    private orderViolationsElement: HTMLElement;
     private readonly stacks: { [key: number]: CardStackWidget } = {};
 
-    private cardsDisposition: CardsDispositionDto<CardStackType>;
+    private gameState: GameState;
 
     public constructor(private readonly gameService: GameService, rootElementId: string) {
         this.root = document.getElementById(rootElementId)
@@ -24,15 +25,25 @@ export default class AppWidget {
     }
 
     public createLayout(): void {
-        this.cardsDisposition = this.gameService.getCardsDisposition();
+        this.gameState = this.gameService.getGameState();
 
+        this.createOrderViolationsElement();
         this.createUndoRedoButtons();
         this.createStacks();
     }
 
+    private createOrderViolationsElement(): void {
+        this.orderViolationsElement = document.createElement('div');
+        this.orderViolationsElement.classList.add('order-violations');
+        
+        this.setOrderViolationsCount();
+        
+        this.root.appendChild(this.orderViolationsElement);
+    }
+
     private createStacks(): void {
         const groupedStacks: CardStackDto<CardStackType>[][] =
-            from(this.cardsDisposition.stacks)
+            from(this.gameState.cardsDisposition.stacks)
                 .groupBy(s => s.type)
                 .select(g => g.toArray())
                 .toArray();
@@ -109,11 +120,13 @@ export default class AppWidget {
         const cardWidget = this.stacks[e.fromStackId].popCard();
         this.stacks[e.toStackId].pushCard(cardWidget);
 
-        this.cardsDisposition = this.gameService.getCardsDisposition();
+        this.gameState = this.gameService.getGameState();
 
-        for (const stack of this.cardsDisposition.stacks) {
+        for (const stack of this.gameState.cardsDisposition.stacks) {
             this.stacks[stack.id].setCards(stack.cards);
         }
+        
+        this.setOrderViolationsCount();
     }
 
     private onCardDroppedOnRow(cardId: number, stackId: number): void {
@@ -165,7 +178,7 @@ export default class AppWidget {
     }
 
     private getStackIdByCardId(cardId: number): number {
-        for (const stack of this.cardsDisposition.stacks) {
+        for (const stack of this.gameState.cardsDisposition.stacks) {
             for (const card of stack.cards) {
                 if (card.id === cardId) {
                     return stack.id;
@@ -174,5 +187,9 @@ export default class AppWidget {
         }
 
         throw new Error(`Card ${cardId} not found`);
+    }
+    
+    private setOrderViolationsCount(): void {
+        this.orderViolationsElement.innerText = this.gameState.orderViolations.toString();
     }
 }

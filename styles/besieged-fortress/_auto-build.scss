@@ -1,0 +1,14 @@
+﻿@import './variables';
+
+.auto-build {
+  position: absolute;
+  left: $undo-redo-size * 2 + $header-inner-margin;
+  top: 0;
+  width: $auto-build-width;
+  height: $header-height;
+  
+  & button {
+    width: 100%;
+    height: 100%;
+  }
+}

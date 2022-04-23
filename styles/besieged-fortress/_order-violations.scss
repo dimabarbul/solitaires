@@ -3,7 +3,7 @@
 .order-violations {
   font-size: large;
   position: absolute;
-  left: $undo-redo-size * 2 + 25px;
+  left: $undo-redo-size * 2 + $header-inner-margin + $auto-build-width + $header-inner-margin;
   
   &::before {
     content: "Order Violations: ";

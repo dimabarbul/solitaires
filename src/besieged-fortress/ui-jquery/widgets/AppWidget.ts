@@ -28,6 +28,7 @@ export default class AppWidget {
         this.gameState = this.gameService.getGameState();
 
         this.createOrderViolationsElement();
+        this.createAutoBuildElement();
         this.createUndoRedoButtons();
         this.createStacks();
     }
@@ -39,6 +40,19 @@ export default class AppWidget {
         this.setOrderViolationsCount();
         
         this.root.appendChild(this.orderViolationsElement);
+    }
+    
+    private createAutoBuildElement(): void {
+        const autoBuildElement = document.createElement('div');
+        autoBuildElement.classList.add('auto-build');
+        
+        const autoBuildButton = document.createElement('button');
+        autoBuildButton.innerText = 'Auto-build';
+        autoBuildButton.addEventListener('click', this.autoBuild.bind(this));
+        
+        autoBuildElement.appendChild(autoBuildButton);
+        
+        this.root.appendChild(autoBuildElement);
     }
 
     private createStacks(): void {
@@ -191,5 +205,22 @@ export default class AppWidget {
     
     private setOrderViolationsCount(): void {
         this.orderViolationsElement.innerText = this.gameState.orderViolations.toString();
+    }
+    
+    private autoBuild(): void {
+        let movedAnyCard: boolean;
+
+        do {
+            movedAnyCard = false;
+            
+            for (const stack of this.gameState.cardsDisposition.stacks) {
+                for (const card of stack.cards) {
+                    if (this.gameService.canMoveCardToAnyFoundation(card.id)) {
+                        this.gameService.moveCardToAnyFoundation(card.id);
+                        movedAnyCard = true;
+                    }
+                }
+            }
+        } while (movedAnyCard);
     }
 }

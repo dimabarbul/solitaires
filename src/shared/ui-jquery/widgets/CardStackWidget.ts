@@ -20,18 +20,18 @@ export default class CardStackWidget {
     private readonly _position: Point3D;
 
     public constructor(
-        protected readonly element: HTMLElement,
-        protected readonly index: number,
-        protected readonly id: number,
+        private readonly _element: HTMLElement,
+        private readonly _index: number,
+        private readonly _id: number,
         private readonly _type: string,
-        protected readonly direction: CardStackDirection,
-        protected readonly cards: CardWidget[],
+        private readonly _direction: CardStackDirection,
+        private readonly _cards: CardWidget[],
         private readonly _isDroppable: boolean,
         private readonly _onCardDropped: (cardId: number, stackId: number) => void
     ) {
         this.initElement();
 
-        const clientRect: DOMRect = this.element.getBoundingClientRect();
+        const clientRect: DOMRect = this._element.getBoundingClientRect();
         this._position = new Point3D(
             clientRect.left + window.scrollX,
             clientRect.top + window.scrollY,
@@ -44,15 +44,15 @@ export default class CardStackWidget {
     }
 
     public get isEmpty(): boolean {
-        return this.cards.length === 0;
+        return this._cards.length === 0;
     }
 
     public pushCard(card: CardWidget): void {
-        this.cards.push(card);
+        this._cards.push(card);
     }
 
     public popCard(): CardWidget {
-        return this.cards.pop()
+        return this._cards.pop()
             ?? ((): never => {
                 throw new Error('No cards to pop');
             })();
@@ -70,29 +70,29 @@ export default class CardStackWidget {
 
     public resetCardPosition(cardId: number): void {
         const cardWidget = this.getWidget(cardId);
-        const cardIndex = this.cards.findIndex(c => c === cardWidget);
+        const cardIndex = this._cards.findIndex(c => c === cardWidget);
 
         cardWidget.move(this.getCardPosition(cardIndex));
     }
 
     protected getElementClassName(): string {
-        return ClassHelper.stack(this._type, this.index);
+        return ClassHelper.stack(this._type, this._index);
     }
 
     protected initElement(): void {
-        this.element.className = this.getElementClassName();
-        this.element.style.zIndex = CardStackWidget._baseZLevel.toString();
+        this._element.className = this.getElementClassName();
+        this._element.style.zIndex = CardStackWidget._baseZLevel.toString();
     }
 
     private getWidget(cardId: number): CardWidget {
-        return this.cards.find(c => c.card.id === cardId)
+        return this._cards.find(c => c.card.id === cardId)
             ?? ((): never => {
                 throw new Error(`Card widget for card ${cardId} not found`);
             })();
     }
 
     private getXDelta(): number {
-        switch (this.direction) {
+        switch (this._direction) {
             case CardStackDirection.Left:
                 return -CardStackWidget._xDelta;
             case CardStackDirection.Right:
@@ -103,11 +103,11 @@ export default class CardStackWidget {
                 return 0;
         }
 
-        throw new Error(`Unexpected direction ${this.direction}`);
+        throw new Error(`Unexpected direction ${this._direction}`);
     }
 
     private getYDelta(): number {
-        switch (this.direction) {
+        switch (this._direction) {
             case CardStackDirection.None:
             case CardStackDirection.Left:
             case CardStackDirection.Right:
@@ -118,16 +118,16 @@ export default class CardStackWidget {
                 return -CardStackWidget._yDelta;
         }
 
-        throw new Error(`Unexpected direction ${this.direction}`);
+        throw new Error(`Unexpected direction ${this._direction}`);
     }
 
     private makeDroppable(): void {
-        const $element = $(this.element);
+        const $element = $(this._element);
         $element.droppable();
         $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
             const droppedCardId: number = parseInt(ui.draggable.data('cardId'));
 
-            this._onCardDropped(droppedCardId, this.id);
+            this._onCardDropped(droppedCardId, this._id);
         });
     }
 

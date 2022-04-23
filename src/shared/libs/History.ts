@@ -4,23 +4,23 @@ import { ICommand } from './Commands';
 export default class History {
     public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
-    private readonly _commands: ICommand[] = [];
-    private _currentIndex: number = -1;
+    private readonly commands: ICommand[] = [];
+    private currentIndex: number = -1;
 
     public clear(): void {
-        this._commands.length = 0;
-        this._currentIndex = -1;
+        this.commands.length = 0;
+        this.currentIndex = -1;
 
         this.onHistoryChanged.trigger();
     }
 
     public pushCommand(command: ICommand): void {
-        if (this._currentIndex < this._commands.length - 1) {
-            this._commands.length = this._currentIndex + 1;
+        if (this.currentIndex < this.commands.length - 1) {
+            this.commands.length = this.currentIndex + 1;
         }
 
-        this._commands.push(command);
-        this._currentIndex++;
+        this.commands.push(command);
+        this.currentIndex++;
 
         this.onHistoryChanged.trigger();
     }
@@ -30,7 +30,7 @@ export default class History {
             throw new Error('No more commands to move back');
         }
 
-        const command = this._commands[this._currentIndex--];
+        const command = this.commands[this.currentIndex--];
 
         this.onHistoryChanged.trigger();
 
@@ -42,7 +42,7 @@ export default class History {
             throw new Error('No more commands to move forward');
         }
 
-        const command = this._commands[++this._currentIndex];
+        const command = this.commands[++this.currentIndex];
 
         this.onHistoryChanged.trigger();
 
@@ -50,10 +50,10 @@ export default class History {
     }
 
     public canMoveBack(): boolean {
-        return this._currentIndex >= 0;
+        return this.currentIndex >= 0;
     }
 
     public canMoveForward(): boolean {
-        return this._currentIndex < this._commands.length - 1;
+        return this.currentIndex < this.commands.length - 1;
     }
 }

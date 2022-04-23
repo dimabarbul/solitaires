@@ -9,9 +9,9 @@ import CardStackType from './CardStackType';
 import AbstractGame from '../../shared/domain/AbstractGame';
 
 export default class Game extends AbstractGame<CardStackType> {
-    private readonly _aceFoundations: AceFoundation[] = new Array(4);
-    private readonly _kingFoundations: KingFoundation[] = new Array(4);
-    private readonly _columns: Column[] = new Array(13);
+    private readonly aceFoundations: AceFoundation[] = new Array(4);
+    private readonly kingFoundations: KingFoundation[] = new Array(4);
+    private readonly columns: Column[] = new Array(13);
 
     public constructor(cards: readonly Card[]) {
         super();
@@ -22,7 +22,7 @@ export default class Game extends AbstractGame<CardStackType> {
 
         this.createFoundations(cards);
         this.createColumns(cards);
-        this.fillStacks([this._aceFoundations, this._kingFoundations, this._columns]);
+        this.fillStacks([this.aceFoundations, this.kingFoundations, this.columns]);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
@@ -34,14 +34,14 @@ export default class Game extends AbstractGame<CardStackType> {
     }
 
     public isGameFinished(): boolean {
-        return this._columns.every(c => c.isEmpty);
+        return this.columns.every(c => c.isEmpty);
     }
 
     private createFoundations(cards: readonly Card[]): void {
         const suits: CardSuit[] = [ CardSuit.Clubs, CardSuit.Diamonds, CardSuit.Hearts, CardSuit.Spades ];
 
         for (let i = 0; i < suits.length; i++) {
-            this._aceFoundations[i] = new AceFoundation(
+            this.aceFoundations[i] = new AceFoundation(
                 i,
                 suits[i],
                 cards.find(c => c.suit === suits[i] && c.value === CardValue.Ace)
@@ -49,7 +49,7 @@ export default class Game extends AbstractGame<CardStackType> {
                         throw new Error(`Cannot find ace card for suit ${suits[i]}`);
                     })()
             );
-            this._kingFoundations[i] = new KingFoundation(i + 4, suits[i]);
+            this.kingFoundations[i] = new KingFoundation(i + 4, suits[i]);
         }
     }
 
@@ -57,11 +57,11 @@ export default class Game extends AbstractGame<CardStackType> {
         const cardsWithoutAces = cards.filter((card: Card) => card.value !== CardValue.Ace);
 
         for (let i = 0; i < 4; i++) {
-            this._columns[i] = new Column(i + 8, cardsWithoutAces.slice(i * 3, i * 3 + 3));
+            this.columns[i] = new Column(i + 8, cardsWithoutAces.slice(i * 3, i * 3 + 3));
         }
 
         for (let i = 0; i < 9; i++) {
-            this._columns[i + 4] = new Column(i + 12, cardsWithoutAces.slice(12 + i * 4, 12 + i * 4 + 4));
+            this.columns[i + 4] = new Column(i + 12, cardsWithoutAces.slice(12 + i * 4, 12 + i * 4 + 4));
         }
     }
 }

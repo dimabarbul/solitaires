@@ -68,8 +68,7 @@ export const random = {
 };
 
 export class DeckBuilder {
-
-    private readonly _cards: Card[] = Deck.getFullDeck().cards;
+    private readonly cards: Card[] = Deck.getFullDeck().cards;
 
     public constructor() {
         this.moveCard(CardSuit.Diamonds, CardValue.Ace, 48);
@@ -79,7 +78,7 @@ export class DeckBuilder {
     }
 
     public build(): Deck {
-        return new Deck(this._cards, false);
+        return new Deck(this.cards, false);
     }
 
     public withAvailableCardInColumn(suit: CardSuit, value: CardValue, columnNumber: number): this {
@@ -116,7 +115,7 @@ export class DeckBuilder {
         const cardNumber = this.findCard(suit, value);
 
         if (cardNumber !== toNumber) {
-            [this._cards[toNumber], this._cards[cardNumber]] = [this._cards[cardNumber], this._cards[toNumber]];
+            [this.cards[toNumber], this.cards[cardNumber]] = [this.cards[cardNumber], this.cards[toNumber]];
         }
     }
 
@@ -131,7 +130,7 @@ export class DeckBuilder {
     }
 
     private findCard(suit: CardSuit, value: CardValue): number {
-        const index = this._cards
+        const index = this.cards
             .findIndex(c => c.suit === suit && c.value === value);
 
         if (index === -1) {

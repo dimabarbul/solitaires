@@ -5,16 +5,16 @@
 
 export class Command implements ICommand {
     public constructor(
-        private readonly _executeAction: () => void,
-        private readonly _undoAction: () => void
+        private readonly executeAction: () => void,
+        private readonly undoAction: () => void
     ) {
     }
 
     public execute(): void {
-        this._executeAction();
+        this.executeAction();
     }
 
     public undo(): void {
-        this._undoAction();
+        this.undoAction();
     }
 }

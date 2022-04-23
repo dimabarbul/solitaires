@@ -12,29 +12,29 @@ export default class GameService {
     public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
     public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
-    private _game: Game|null = null;
-    private readonly _history: History = new History();
+    private game: Game|null = null;
+    private readonly history: History = new History();
 
-    public get game(): Game {
-        if (this._game === null) {
+    private get startedGame(): Game {
+        if (this.game === null) {
             throw new Error('Game is not initialized');
         }
 
-        return this._game;
+        return this.game;
     }
 
     public start(cards: Card[]): void {
-        this._game = new Game(cards);
-        this._history.clear();
+        this.game = new Game(cards);
+        this.history.clear();
         this.initEvents();
     }
 
     public getCardsDisposition(): CardsDispositionDto<CardStackType> {
-        return this.game.getCardsDisposition();
+        return this.startedGame.getCardsDisposition();
     }
 
     public canMoveCard(cardId: number): boolean {
-        return this.game.canMove(cardId);
+        return this.startedGame.canMove(cardId);
     }
 
     public canMoveCardToCard(sourceCardId: number, targetCardId: number): boolean {
@@ -44,27 +44,27 @@ export default class GameService {
 
         const targetStackId = this.getCardStackId(targetCardId);
 
-        return this.game.canMoveCardToStack(sourceCardId, targetStackId);
+        return this.startedGame.canMoveCardToStack(sourceCardId, targetStackId);
     }
 
     public canMoveCardToEmptyRow(cardId: number, stackId: number): boolean {
         return this.isStackEmpty(stackId)
-            && this.game.canMoveCardToStack(cardId, stackId);
+            && this.startedGame.canMoveCardToStack(cardId, stackId);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
-        return this.game.canMoveCardToAnyFoundation(cardId);
+        return this.startedGame.canMoveCardToAnyFoundation(cardId);
     }
 
     public canMoveCardToFoundation(cardId: number, foundationId: number): boolean {
-        return this.game.canMoveCardToStack(cardId, foundationId);
+        return this.startedGame.canMoveCardToStack(cardId, foundationId);
     }
 
     public moveCardToCard(sourceCardId: number, targetCardId: number): void {
         const targetStackId = this.getCardStackId(targetCardId);
-        const command = this.game.moveCardToStack(sourceCardId, targetStackId);
+        const command = this.startedGame.moveCardToStack(sourceCardId, targetStackId);
 
-        this._history.pushCommand(command);
+        this.history.pushCommand(command);
     }
 
     public moveCardToEmptyRow(cardId: number, stackId: number): void {
@@ -72,18 +72,18 @@ export default class GameService {
             throw new Error(`Stack ${stackId} is not empty`);
         }
         
-        const command: ICommand = this.game.moveCardToStack(cardId, stackId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToStack(cardId, stackId);
+        this.history.pushCommand(command);
     }
 
     public moveCardToAnyFoundation(cardId: number): void {
-        const command: ICommand = this.game.moveCardToAnyFoundation(cardId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToAnyFoundation(cardId);
+        this.history.pushCommand(command);
     }
 
     public moveCardToFoundation(cardId: number, foundationId: number): void {
-        const command: ICommand = this.game.moveCardToStack(cardId, foundationId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToStack(cardId, foundationId);
+        this.history.pushCommand(command);
     }
 
     public undo(): void {
@@ -91,7 +91,7 @@ export default class GameService {
             throw new Error('Cannot undo');
         }
 
-        const command: ICommand = this._history.moveBack();
+        const command: ICommand = this.history.moveBack();
         command.undo();
     }
 
@@ -100,16 +100,16 @@ export default class GameService {
             throw new Error('Cannot redo');
         }
 
-        const command: ICommand = this._history.moveForward();
+        const command: ICommand = this.history.moveForward();
         command.execute();
     }
 
     public canUndo(): boolean {
-        return this._history.canMoveBack();
+        return this.history.canMoveBack();
     }
 
     public canRedo(): boolean {
-        return this._history.canMoveForward();
+        return this.history.canMoveForward();
     }
 
     private getCardStackId(cardId: number): number {
@@ -127,9 +127,9 @@ export default class GameService {
     }
 
     private initEvents(): void {
-        this.game.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
-        this.game.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
-        this._history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
+        this.startedGame.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
+        this.startedGame.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
+        this.history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
     }
     
     private isStackEmpty(stackId: number): boolean {

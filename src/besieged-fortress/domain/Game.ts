@@ -7,8 +7,8 @@ import AbstractGame from '../../shared/domain/AbstractGame';
 import CardStackType from './CardStackType';
 
 export default class Game extends AbstractGame<CardStackType> {
-    private readonly _foundations: Foundation[] = new Array(4);
-    private readonly _rows: Row[] = new Array(8);
+    private readonly foundations: Foundation[] = new Array(4);
+    private readonly rows: Row[] = new Array(8);
 
     public constructor(cards: readonly Card[]) {
         super();
@@ -19,7 +19,7 @@ export default class Game extends AbstractGame<CardStackType> {
 
         this.createFoundations(cards);
         this.createRows(cards);
-        this.fillStacks([this._foundations, this._rows]);
+        this.fillStacks([this.foundations, this.rows]);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
@@ -31,7 +31,7 @@ export default class Game extends AbstractGame<CardStackType> {
     }
 
     public isGameFinished(): boolean {
-        return this._rows.every(r => r.isEmpty);
+        return this.rows.every(r => r.isEmpty);
     }
 
     private createFoundations(cards: readonly Card[]): void {
@@ -39,18 +39,18 @@ export default class Game extends AbstractGame<CardStackType> {
 
         for (const card of cards) {
             if (card.value === CardValue.Ace) {
-                this._foundations[foundationIndex] = new Foundation(foundationIndex, card);
+                this.foundations[foundationIndex] = new Foundation(foundationIndex, card);
                 foundationIndex++;
             }
         }
     }
 
     private createRows(cards: readonly Card[]): void {
-        const startId: number = this._foundations.length;
+        const startId: number = this.foundations.length;
         const cardsWithoutAces: Card[] = cards.filter(card => card.value !== CardValue.Ace);
 
         for (let i = 0; i < 8; i++) {
-            this._rows[i] = new Row(i + startId, cardsWithoutAces.slice(i * 4, (i + 1) * 4));
+            this.rows[i] = new Row(i + startId, cardsWithoutAces.slice(i * 4, (i + 1) * 4));
         }
     }
 }

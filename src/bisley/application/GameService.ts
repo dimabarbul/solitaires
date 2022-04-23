@@ -13,29 +13,29 @@ export default class GameService {
     public readonly onGameFinished: EventHandler<void> = new EventHandler<void>();
     public readonly onHistoryChanged: EventHandler<void> = new EventHandler<void>();
 
-    private _game: Game|null = null;
-    private readonly _history: History = new History();
+    private game: Game|null = null;
+    private readonly history: History = new History();
 
-    public get game(): Game {
-        if (this._game === null) {
+    public get startedGame(): Game {
+        if (this.game === null) {
             throw new Error('Game is not initialized');
         }
 
-        return this._game;
+        return this.game;
     }
 
     public start(cards: readonly Card[]): void {
-        this._game = new Game(cards);
-        this._history.clear();
+        this.game = new Game(cards);
+        this.history.clear();
         this.initEvents();
     }
 
     public getCardsDisposition(): CardsDispositionDto<CardStackType> {
-        return this.game.getCardsDisposition();
+        return this.startedGame.getCardsDisposition();
     }
 
     public canMoveCard(cardId: number): boolean {
-        return this.game.canMove(cardId);
+        return this.startedGame.canMove(cardId);
     }
 
     public canMoveCardToCard(sourceCardId: number, targetCardId: number): boolean {
@@ -45,39 +45,39 @@ export default class GameService {
 
         const targetCardPosition: CardPosition = this.getCardPosition(targetCardId);
 
-        return this.game.canMoveCardToStack(sourceCardId, targetCardPosition.stackId);
+        return this.startedGame.canMoveCardToStack(sourceCardId, targetCardPosition.stackId);
     }
 
     public canMoveCardToStack(cardId: number, stackId: number): boolean {
-        return this.game.canMoveCardToStack(cardId, stackId);
+        return this.startedGame.canMoveCardToStack(cardId, stackId);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
-        return this.game.canMoveCardToAnyFoundation(cardId);
+        return this.startedGame.canMoveCardToAnyFoundation(cardId);
     }
 
     public moveCardToCard(sourceCardId: number, targetCardId: number): void {
         const targetCardPosition: CardPosition = this.getCardPosition(targetCardId);
-        const command: ICommand = this.game.moveCardToStack(sourceCardId, targetCardPosition.stackId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToStack(sourceCardId, targetCardPosition.stackId);
+        this.history.pushCommand(command);
     }
 
     public moveCardToStack(cardId: number, stackId: number): void {
-        const command: ICommand = this.game.moveCardToStack(cardId, stackId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToStack(cardId, stackId);
+        this.history.pushCommand(command);
     }
 
     public moveCardToAnyFoundation(cardId: number): void {
-        const command: ICommand = this.game.moveCardToAnyFoundation(cardId);
-        this._history.pushCommand(command);
+        const command: ICommand = this.startedGame.moveCardToAnyFoundation(cardId);
+        this.history.pushCommand(command);
     }
 
     public canUndo(): boolean {
-        return this._history.canMoveBack();
+        return this.history.canMoveBack();
     }
 
     public canRedo(): boolean {
-        return this._history.canMoveForward();
+        return this.history.canMoveForward();
     }
 
     public undo(): void {
@@ -85,7 +85,7 @@ export default class GameService {
             throw new Error('Cannot undo');
         }
 
-        const command: ICommand = this._history.moveBack();
+        const command: ICommand = this.history.moveBack();
         command.undo();
     }
 
@@ -94,7 +94,7 @@ export default class GameService {
             throw new Error('Cannot redo');
         }
 
-        const command: ICommand = this._history.moveForward();
+        const command: ICommand = this.history.moveForward();
         command.execute();
     }
 
@@ -113,8 +113,8 @@ export default class GameService {
     }
 
     private initEvents(): void {
-        this.game.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
-        this.game.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
-        this._history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
+        this.startedGame.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
+        this.startedGame.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
+        this.history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
     }
 }

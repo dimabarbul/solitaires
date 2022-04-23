@@ -10,16 +10,14 @@ enum CardStackType {
 let stackId = 1;
 
 class TestCardStack extends CardStack<CardStackType> {
-    private readonly _canPush: boolean;
-
-    public constructor(cards: Card[], canPush: boolean = true) {
+    public constructor(
+        cards: Card[],
+        private readonly canPushAnyCard: boolean = true) {
         super(stackId++, CardStackType.Test, cards);
-
-        this._canPush = canPush;
     }
 
     public canPush(_: Card): boolean {
-        return this._canPush;
+        return this.canPushAnyCard;
     }
 }
 

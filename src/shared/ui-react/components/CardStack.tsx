@@ -27,9 +27,9 @@ export enum CardStackDirection {
 }
 
 export default class CardStack extends React.Component<ICardStackProps, ICardStackState> {
-    private static readonly _xDelta: number = 25;
-    private static readonly _yDelta: number = 130;
-    private static readonly _baseZLevel: number = 0;
+    private static readonly xDelta: number = 25;
+    private static readonly yDelta: number = 130;
+    private static readonly baseZLevel: number = 0;
 
     public constructor(props: ICardStackProps) {
         super(props);
@@ -80,9 +80,9 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
     private getXDelta(index: number): number {
         switch (this.props.direction) {
             case CardStackDirection.Left:
-                return -CardStack._xDelta * index;
+                return -CardStack.xDelta * index;
             case CardStackDirection.Right:
-                return CardStack._xDelta * index;
+                return CardStack.xDelta * index;
             case CardStackDirection.None:
             case CardStackDirection.Top:
             case CardStackDirection.Bottom:
@@ -99,15 +99,15 @@ export default class CardStack extends React.Component<ICardStackProps, ICardSta
             case CardStackDirection.Right:
                 return 0;
             case CardStackDirection.Top:
-                return -(index * CardStack._yDelta);
+                return -(index * CardStack.yDelta);
             case CardStackDirection.Bottom:
-                return index * CardStack._yDelta;
+                return index * CardStack.yDelta;
         }
 
         throw new Error(`Unexpected direction ${this.props.direction}`);
     }
 
     private getZLevel(index: number): number {
-        return CardStack._baseZLevel + index + 1;
+        return CardStack.baseZLevel + index + 1;
     }
 }

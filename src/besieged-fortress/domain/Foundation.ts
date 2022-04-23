@@ -6,7 +6,7 @@ import CardSuit from '../../shared/domain/CardSuit';
 import { CardExtensions } from './CardExtensions';
 
 export default class Foundation extends CardStack<CardStackType> {
-    private readonly _suit: CardSuit;
+    private readonly suit: CardSuit;
 
     public constructor(id: number, ace: Card) {
         super(id, CardStackType.Foundation, [ace]);
@@ -15,11 +15,7 @@ export default class Foundation extends CardStack<CardStackType> {
             throw new Error('Ace card must be the first card in the foundation');
         }
 
-        this._suit = ace.suit;
-    }
-
-    public get suit(): CardSuit {
-        return this._suit;
+        this.suit = ace.suit;
     }
 
     public canPush(card: Card): boolean {

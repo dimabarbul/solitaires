@@ -166,15 +166,9 @@
         "leadingUnderscore": "forbid"
       },
       {
-        "selector": "parameter",
+        "selector": ["parameter", "property", "parameterProperty"],
         "format": [ "camelCase" ],
         "trailingUnderscore": "allow"
-      },
-      {
-        "selector": [ "property", "parameterProperty" ],
-        "format": [ "camelCase" ],
-        "modifiers": [ "private" ],
-        "leadingUnderscore": "require"
       },
       {
         "selector": ["class", "enum", "enumMember", "typeAlias"],

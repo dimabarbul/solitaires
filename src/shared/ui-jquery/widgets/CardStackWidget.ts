@@ -13,46 +13,46 @@ export enum CardStackDirection {
 }
 
 export default class CardStackWidget {
-    private static readonly _xDelta: number = 25;
-    private static readonly _yDelta: number = 25;
-    private static readonly _baseZLevel: number = 0
+    private static readonly xDelta: number = 25;
+    private static readonly yDelta: number = 25;
+    private static readonly baseZLevel: number = 0
 
-    private readonly _position: Point3D;
+    private readonly position: Point3D;
 
     public constructor(
-        private readonly _element: HTMLElement,
-        private readonly _index: number,
-        private readonly _id: number,
-        private readonly _type: string,
-        private readonly _direction: CardStackDirection,
-        private readonly _cards: CardWidget[],
-        private readonly _isDroppable: boolean,
-        private readonly _onCardDropped: (cardId: number, stackId: number) => void
+        private readonly element: HTMLElement,
+        private readonly index: number,
+        private readonly id: number,
+        private readonly type: string,
+        private readonly direction: CardStackDirection,
+        private readonly cards: CardWidget[],
+        private readonly isDroppable: boolean,
+        private readonly onCardDropped: (cardId: number, stackId: number) => void
     ) {
         this.initElement();
 
-        const clientRect: DOMRect = this._element.getBoundingClientRect();
-        this._position = new Point3D(
+        const clientRect: DOMRect = this.element.getBoundingClientRect();
+        this.position = new Point3D(
             clientRect.left + window.scrollX,
             clientRect.top + window.scrollY,
-            CardStackWidget._baseZLevel
+            CardStackWidget.baseZLevel
         );
 
-        if (_isDroppable) {
+        if (isDroppable) {
             this.makeDroppable();
         }
     }
 
     public get isEmpty(): boolean {
-        return this._cards.length === 0;
+        return this.cards.length === 0;
     }
 
     public pushCard(card: CardWidget): void {
-        this._cards.push(card);
+        this.cards.push(card);
     }
 
     public popCard(): CardWidget {
-        return this._cards.pop()
+        return this.cards.pop()
             ?? ((): never => {
                 throw new Error('No cards to pop');
             })();
@@ -70,72 +70,72 @@ export default class CardStackWidget {
 
     public resetCardPosition(cardId: number): void {
         const cardWidget = this.getWidget(cardId);
-        const cardIndex = this._cards.findIndex(c => c === cardWidget);
+        const cardIndex = this.cards.findIndex(c => c === cardWidget);
 
         cardWidget.move(this.getCardPosition(cardIndex));
     }
 
     protected getElementClassName(): string {
-        return ClassHelper.stack(this._type, this._index);
+        return ClassHelper.stack(this.type, this.index);
     }
 
     protected initElement(): void {
-        this._element.className = this.getElementClassName();
-        this._element.style.zIndex = CardStackWidget._baseZLevel.toString();
+        this.element.className = this.getElementClassName();
+        this.element.style.zIndex = CardStackWidget.baseZLevel.toString();
     }
 
     private getWidget(cardId: number): CardWidget {
-        return this._cards.find(c => c.card.id === cardId)
+        return this.cards.find(c => c.cardId === cardId)
             ?? ((): never => {
                 throw new Error(`Card widget for card ${cardId} not found`);
             })();
     }
 
     private getXDelta(): number {
-        switch (this._direction) {
+        switch (this.direction) {
             case CardStackDirection.Left:
-                return -CardStackWidget._xDelta;
+                return -CardStackWidget.xDelta;
             case CardStackDirection.Right:
-                return CardStackWidget._xDelta;
+                return CardStackWidget.xDelta;
             case CardStackDirection.None:
             case CardStackDirection.Top:
             case CardStackDirection.Bottom:
                 return 0;
         }
 
-        throw new Error(`Unexpected direction ${this._direction}`);
+        throw new Error(`Unexpected direction ${this.direction}`);
     }
 
     private getYDelta(): number {
-        switch (this._direction) {
+        switch (this.direction) {
             case CardStackDirection.None:
             case CardStackDirection.Left:
             case CardStackDirection.Right:
                 return 0;
             case CardStackDirection.Top:
-                return CardStackWidget._yDelta;
+                return CardStackWidget.yDelta;
             case CardStackDirection.Bottom:
-                return -CardStackWidget._yDelta;
+                return -CardStackWidget.yDelta;
         }
 
-        throw new Error(`Unexpected direction ${this._direction}`);
+        throw new Error(`Unexpected direction ${this.direction}`);
     }
 
     private makeDroppable(): void {
-        const $element = $(this._element);
+        const $element = $(this.element);
         $element.droppable();
         $element.on('drop', (event: JQuery.Event, ui: JQueryUI.DroppableEventUIParam): void => {
             const droppedCardId: number = parseInt(ui.draggable.data('cardId'));
 
-            this._onCardDropped(droppedCardId, this._id);
+            this.onCardDropped(droppedCardId, this.id);
         });
     }
 
     private getCardPosition(index: number): Point3D {
         return new Point3D(
-            this._position.x + index * this.getXDelta(),
-            this._position.y + index * this.getYDelta(),
-            index + 1 + CardStackWidget._baseZLevel
+            this.position.x + index * this.getXDelta(),
+            this.position.y + index * this.getYDelta(),
+            index + 1 + CardStackWidget.baseZLevel
         );
     }
 }

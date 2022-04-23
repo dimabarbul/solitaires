@@ -7,14 +7,10 @@ import { CardExtensions } from './CardExtensions';
 export default class AceFoundation extends CardStack<CardStackType> {
     public constructor(
         id: number,
-        private readonly _suit: CardSuit,
+        public readonly suit: CardSuit,
         ace: Card
     ) {
         super(id, CardStackType.AceFoundation, [ace]);
-    }
-
-    public get suit(): CardSuit {
-        return this._suit;
     }
 
     public isCardAvailable(_: number): boolean {
@@ -22,7 +18,7 @@ export default class AceFoundation extends CardStack<CardStackType> {
     }
 
     public canPush(card: Card): boolean {
-        return this._suit === card.suit
+        return this.suit === card.suit
             && CardExtensions.getCardValueDifference(card.value, this.topCard.value) === 1;
     }
 }

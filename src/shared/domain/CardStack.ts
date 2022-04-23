@@ -3,34 +3,34 @@ import CardStackDto from './dto/CardStackDto';
 import CardDto from './dto/CardDto';
 
 export default abstract class CardStack<TCardStackType> {
-    private readonly _cards: Card[];
+    private readonly cards: Card[];
 
     protected constructor(
         public readonly id: number,
         public readonly type: TCardStackType,
         cards: readonly Card[]
     ) {
-        this._cards = cards.slice(0, cards.length);
+        this.cards = cards.slice(0, cards.length);
     }
 
     public get isEmpty(): boolean {
-        return this._cards.length === 0;
+        return this.cards.length === 0;
     }
 
     protected get topCard(): Card {
-        if (this._cards.length === 0) {
+        if (this.cards.length === 0) {
             throw new Error('Card stack is empty');
         }
 
-        return this._cards[this._cards.length - 1];
+        return this.cards[this.cards.length - 1];
     }
 
     public isCardAvailable(cardId: number): boolean {
-        return this._cards.length > 0 && this._cards[this._cards.length - 1].id === cardId;
+        return this.cards.length > 0 && this.cards[this.cards.length - 1].id === cardId;
     }
 
     public pop(): Card {
-        return this._cards.pop()
+        return this.cards.pop()
             ?? ((): never => {
                 throw new Error('Card stack is empty');
             })();
@@ -41,19 +41,19 @@ export default abstract class CardStack<TCardStackType> {
             throw new Error(`Cannot push card ${card.toString()} to stack ${this.id}`);
         }
 
-        this._cards.push(card);
+        this.cards.push(card);
     }
 
     public mapToDto(): CardStackDto<TCardStackType> {
         return new CardStackDto<TCardStackType>(
             this.id,
             this.type,
-            this._cards.map(c => new CardDto(c.id, c.suit, c.value, this.isCardAvailable(c.id)))
+            this.cards.map(c => new CardDto(c.id, c.suit, c.value, this.isCardAvailable(c.id)))
         );
     }
 
     public findCard(cardId: number): Card | null {
-        for (const card of this._cards) {
+        for (const card of this.cards) {
             if (card.id === cardId) {
                 return card;
             }
@@ -63,7 +63,7 @@ export default abstract class CardStack<TCardStackType> {
     }
 
     public contains(cardId: number): boolean {
-        return this._cards.some(c => c.id === cardId);
+        return this.cards.some(c => c.id === cardId);
     }
 
     public abstract canPush(card: Card): boolean;

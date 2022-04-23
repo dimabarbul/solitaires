@@ -48,7 +48,8 @@ export default class GameService {
     }
 
     public canMoveCardToEmptyRow(cardId: number, stackId: number): boolean {
-        return this.game.canMoveCardToStack(cardId, stackId);
+        return this.isStackEmpty(stackId)
+            && this.game.canMoveCardToStack(cardId, stackId);
     }
 
     public canMoveCardToAnyFoundation(cardId: number): boolean {
@@ -67,6 +68,10 @@ export default class GameService {
     }
 
     public moveCardToEmptyRow(cardId: number, stackId: number): void {
+        if (!this.isStackEmpty(stackId)) {
+            throw new Error(`Stack ${stackId} is not empty`);
+        }
+        
         const command: ICommand = this.game.moveCardToStack(cardId, stackId);
         this._history.pushCommand(command);
     }
@@ -125,5 +130,17 @@ export default class GameService {
         this.game.onCardMoved.subscribe(this.onCardMoved.trigger.bind(this.onCardMoved));
         this.game.onGameFinished.subscribe(this.onGameFinished.trigger.bind(this.onGameFinished));
         this._history.onHistoryChanged.subscribe(this.onHistoryChanged.trigger.bind(this.onHistoryChanged));
+    }
+    
+    private isStackEmpty(stackId: number): boolean {
+        const cardsDisposition = this.getCardsDisposition();
+
+        for (const stack of cardsDisposition.stacks) {
+            if (stack.id === stackId) {
+                return stack.cards.length === 0;
+            }
+        }
+
+        throw new Error(`Stack with id ${stackId} not found`);
     }
 }

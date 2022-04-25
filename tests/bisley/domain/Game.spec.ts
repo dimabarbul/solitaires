@@ -8,8 +8,6 @@ import '../../assertions';
 import { expect } from 'chai';
 import CardStackType from '../../../src/bisley/domain/CardStackType';
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 describe('game', () => {
     describe('constructor', () => {
         it('can start with 52 cards', () => {
@@ -227,7 +225,9 @@ describe('game', () => {
                 .build();
             const two = deck.findCard(suit, CardValue.Two);
             const game = new Game(deck.cards);
-            let cardMovedEvent: CardMovedEvent | null = null;
+            
+            // cannot assign to null here, because type analysis does not see callbacks
+            let cardMovedEvent: CardMovedEvent | null = ((): CardMovedEvent | null => null)();
 
             game.onCardMoved.subscribe(event => cardMovedEvent = event);
 
@@ -236,9 +236,14 @@ describe('game', () => {
             const columnId = getStackId(game, CardStackType.Column, columnNumber);
             const aceFoundationIds = getStackIds(game, CardStackType.AceFoundation);
             expect(cardMovedEvent).to.not.be.null;
-            expect(cardMovedEvent!.cardId).to.be.equal(two.id);
-            expect(cardMovedEvent!.fromStackId).to.be.equal(columnId);
-            expect(cardMovedEvent!.toStackId).to.be.in(aceFoundationIds);
+            
+            if (cardMovedEvent === null) {
+                return;
+            }
+            
+            expect(cardMovedEvent.cardId).to.be.equal(two.id);
+            expect(cardMovedEvent.fromStackId).to.be.equal(columnId);
+            expect(cardMovedEvent.toStackId).to.be.in(aceFoundationIds);
         });
         it('correct event when moved to king foundation', () => {
             const suit = random.getRandomSuit();
@@ -248,7 +253,7 @@ describe('game', () => {
                 .build();
             const king = deck.findCard(suit, CardValue.King);
             const game = new Game(deck.cards);
-            let cardMovedEvent: CardMovedEvent | null = null;
+            let cardMovedEvent: CardMovedEvent | null = ((): CardMovedEvent | null => null)();
 
             game.onCardMoved.subscribe(event => cardMovedEvent = event);
 
@@ -257,9 +262,15 @@ describe('game', () => {
             const columnId = getStackId(game, CardStackType.Column, columnNumber);
             const kingFoundationIds = getStackIds(game, CardStackType.KingFoundation);
             expect(cardMovedEvent).to.not.be.null;
-            expect(cardMovedEvent!.cardId).to.be.equal(king.id);
-            expect(cardMovedEvent!.fromStackId).to.be.equal(columnId);
-            expect(cardMovedEvent!.toStackId).to.be.in(kingFoundationIds);
+
+            // cannot assign to null here, because type analysis does not see callbacks
+            if (cardMovedEvent === null) {
+                return;
+            }
+
+            expect(cardMovedEvent.cardId).to.be.equal(king.id);
+            expect(cardMovedEvent.fromStackId).to.be.equal(columnId);
+            expect(cardMovedEvent.toStackId).to.be.in(kingFoundationIds);
         });
         it('correct event when can be moved to either ace or king foundation', () => {
             const suit = random.getRandomSuit();
@@ -276,7 +287,7 @@ describe('game', () => {
             const deck = deckBuilder.build();
             const eight = deck.findCard(suit, CardValue.Eight);
             const game = new Game(deck.cards);
-            let cardMovedEvent: CardMovedEvent | null = null;
+            let cardMovedEvent: CardMovedEvent | null = ((): CardMovedEvent | null => null)();
 
             toKingFoundation
                 .map((value: CardValue) => deck.findCard(suit, value))
@@ -292,9 +303,15 @@ describe('game', () => {
             const columnId = getStackId(game, CardStackType.Column, eightColumnNumber);
             const aceFoundationIds = getStackIds(game, CardStackType.AceFoundation);
             expect(cardMovedEvent).to.not.be.null;
-            expect(cardMovedEvent!.cardId).to.be.equal(eight.id);
-            expect(cardMovedEvent!.fromStackId).to.be.equal(columnId);
-            expect(cardMovedEvent!.toStackId).to.be.in(aceFoundationIds);
+
+            // cannot assign to null here, because type analysis does not see callbacks
+            if (cardMovedEvent === null) {
+                return;
+            }
+            
+            expect(cardMovedEvent.cardId).to.be.equal(eight.id);
+            expect(cardMovedEvent.fromStackId).to.be.equal(columnId);
+            expect(cardMovedEvent.toStackId).to.be.in(aceFoundationIds);
         });
     });
     describe('can move to column', () => {

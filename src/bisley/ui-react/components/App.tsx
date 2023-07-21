@@ -82,11 +82,11 @@ export default class App extends React.Component<IAppProps, IAppState> {
     }
 
     private onCardClick(cardId: number): void {
-        if (!this.props.gameService.canMoveCard(cardId)) {
-            return;
-        }
-        
         if (this.state.selectedCardId === null) {
+            if (!this.props.gameService.canMoveCard(cardId)) {
+                return;
+            }
+
             this.setState({
                 selectedCardId: cardId,
             });

@@ -84,7 +84,6 @@
 
           "public-abstract-field",
           "protected-abstract-field",
-          "private-abstract-field",
 
           "public-field",
           "protected-field",
@@ -119,7 +118,6 @@
 
           "public-abstract-get",
           "protected-abstract-get",
-          "private-abstract-get",
 
           "public-get",
           "protected-get",
@@ -136,7 +134,6 @@
 
           "public-abstract-set",
           "protected-abstract-set",
-          "private-abstract-set",
 
           // Methods
           "public-decorated-method",
@@ -148,8 +145,7 @@
           "private-instance-method",
 
           "public-abstract-method",
-          "protected-abstract-method",
-          "private-abstract-method"
+          "protected-abstract-method"
         ]
       }
     ],

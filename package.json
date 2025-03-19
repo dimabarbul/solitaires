@@ -22,7 +22,7 @@
     "jquery": "^3.6.0",
     "jqueryui": "^1.11.1",
     "linq-to-typescript": "^10.0.0",
-    "mocha": "^9.2.2",
+    "mocha": "^11.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "sass": "^1.49.9",

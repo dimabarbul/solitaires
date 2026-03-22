@@ -162,6 +162,11 @@ To run tests:
 npm test
 ```
 
+To run tests in watch mode:
+```bash
+npm run test:watch
+```
+
 To run application open `wwwroot/index.html` in browser.
 
 ## Besieged Fortress Solitaire

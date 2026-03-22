@@ -27,7 +27,7 @@ Continuously rebuilds on file changes.
 ```bash
 npm test
 ```
-Uses Mocha to run all `.ts` test files in `tests/` directory. Tests use `chai` for assertions.
+Uses Vitest to run all `.ts` test files in `tests/` directory. Tests use `chai` for assertions.
 
 ### Run a single test file
 ```bash
@@ -160,4 +160,4 @@ To test locally, open `wwwroot/index.html` in a browser after running `npm run b
 - **TypeScript**: ES5 target, CommonJS modules, strict null checks
 - **Bundler**: Webpack (webpack.config.js defines entry points for each game)
 - **Styles**: Sass files in `styles/{game}/` compiled to CSS
-- **Test runner**: Mocha with ts-node for TypeScript execution
+- **Test runner**: Vitest for TypeScript execution

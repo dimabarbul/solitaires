@@ -5,7 +5,8 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "test": "mocha",
-    "lint": "eslint src tests"
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",

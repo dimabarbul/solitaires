@@ -1,163 +1,85 @@
-# Copilot Instructions for Solitaires Project
+# Copilot instructions for Solitaires (improved)
 
-## Overview
+Purpose: short, exact guidance for Copilot CLI sessions. Include commands, high-level architecture, and repo-specific patterns.
 
-This is a collection of solitaire card games built with a layered architecture. Currently supports two games: Besieged Fortress (jQuery UI) and Bisley (React). Each game follows a shared domain-driven design pattern with three architectural layers.
+---
 
-## Build, Test, and Lint
+## Build, test, and lint (commands)
 
-### Installation
-```bash
-npm install
-```
+- Install deps: `npm install`
+- Build: `npm run build` (webpack → outputs to wwwroot/dist/)
+- Watch builds: `npm run watch`
+- Run all tests (Vitest): `npm test`
+- Run tests in watch mode: `npm run test:watch`
+- Run a single test file (path):
+  - `npm test -- tests/bisley/domain/Game.spec.ts`
+- Run tests matching pattern (grep):
+  - `npm test -- --grep "pattern"`
+- Lint: `npm run lint` (runs ESLint on `src/` and `tests/`)
+- Auto-fix lint: `npm run lint:fix`
 
-### Build
-```bash
-npm run build
-```
-Compiles TypeScript and bundles assets with Webpack. Outputs to `wwwroot/dist/`.
+Notes:
+- Vitest is configured (see `vitest.config.ts`). Use full path to a spec file for single-file runs.
+- Tests use `chai` for assertions.
 
-### Watch mode (for development)
-```bash
-npm run watch
-```
-Continuously rebuilds on file changes.
+---
 
-### Run all tests
-```bash
-npm test
-```
-Uses Vitest to run all `.ts` test files in `tests/` directory. Tests use `chai` for assertions.
+## High-level architecture (big picture)
 
-### Run a single test file
-```bash
-npm test -- tests/bisley/domain/Game.spec.ts
-```
+- Three-layer architecture per game:
+  1. Domain (`src/{game}/domain/`) — pure rules, invariants, events (e.g., CardMovedEvent). Domain answers "can this move be done?" and performs state changes.
+  2. Application (`src/{game}/application/`) — maps UI actions to domain calls, orchestrates multi-step operations (e.g., moveCardToCard → get stack → domain). Holds application-level state (undo/redo via History, auto-build, order-violation tracking). Exposes GameService API.
+  3. UI (`src/{game}/ui-{framework}/`) — framework-specific (jQuery widgets or React components). Responsible for rendering, animations, and user interactions. Calls GameService for validation and execution.
 
-### Run tests matching a pattern
-```bash
-npm test -- --grep "constructor"
-```
+- Shared kernel: `src/shared/` contains domain primitives (Card, Deck, CardStack), UI helpers, and cross-game libs (History, Commands).
+- Entry points: HTML under `wwwroot/` (`index.html`, `besieged-fortress-jquery.html`, `bisley-react.html`) — useful for manual QA and smoke checks after build.
+- Assets: card images in `wwwroot/images/cards/` and SASS styles in `styles/` per game.
 
-### Lint
-```bash
-npm run lint
-```
-Runs ESLint on `src/` and `tests/`.
+---
 
-### Lint with auto-fix
-```bash
-npm run lint:fix
-```
+## Key conventions (repo-specific)
 
-## Architecture
+- Domain purity: Domain layer must not depend on UI or application utilities. Side-effects limited to emitting domain events.
+- Application layer responsibilities:
+  - Translate UI-level operations (move-to-card) into domain-level stack operations.
+  - Provide undo/redo via `src/shared/libs/History.ts` and expose via GameService.
+  - Contain optional features (order-violations detection, auto-build) that are part of app state, not domain.
+- Event flow: Domain → Application (re-emits) → UI. UI depends on application events for rendering.
+- Tests:
+  - Location: `tests/` or `tests/{game}/...` alongside domain tests.
+  - Use `tests/utils.ts` test builders and random helpers.
+  - Spec filenames use `.spec.ts` suffix; run specific file by passing path to `npm test -- <path>`.
+- TypeScript & ESLint conventions (enforced by project):
+  - Interfaces prefixed `I` (IGameState).
+  - Explicit return types on functions and explicit accessibility on members.
+  - `Type[]` arrays, `as` assertions, `_` prefix for intentionally unused params.
+  - Member ordering: static fields → instance fields → constructor → static methods → instance methods.
 
-### Three-Layer Design
+---
 
-1. **Domain Layer** (`src/{game}/domain/`)
-   - Pure game logic with strict invariants
-   - No UI or application concerns
-   - Classes like `Game`, `Card`, foundations, and card stacks
-   - Events (e.g., `CardMovedEvent`) for change notifications
-   - Domain logic answers "can I do this move?" and enforces rules
+## Developer shortcuts & helpful paths
 
-2. **Application Layer** (`src/{game}/application/`)
-   - Orchestrates domain operations
-   - Provides methods that don't map 1:1 to domain methods
-   - Example: `canMoveCardToCard()` translates to `canMoveCardToStack()` calls
-   - Handles UI-agnostic features like undo/redo using `History`
-   - Exposes `GameService` as the main API
-   - Publishes domain events to UI layer
+- GameService examples: `src/bisley/application/GameService.ts`, `src/besieged-fortress/application/GameService.ts`.
+- Domain samples: `src/bisley/domain/`, `src/besieged-fortress/domain/`.
+- Shared domain primitives: `src/shared/domain/` (Card, Deck, CardStack, DTOs).
+- UI React entry: `src/bisley/ui-react/index.tsx`.
+- jQuery UI entry: `src/besieged-fortress/ui-jquery/index.ts`.
+- Tests entry: `tests/` and `tests/bisley/domain/*`
 
-3. **UI Layer** (`src/{game}/ui-{framework}/`)
-   - Framework-specific implementations (jQuery or React)
-   - Handles user interaction and rendering
-   - Calls application layer to validate and execute moves
-   - Listens for domain events and updates the view
-   - jQuery UI: uses widgets; React: uses components
+---
 
-### Application State vs Domain State
+## Editor / LSP guidance
 
-The Application layer maintains **application state** that extends beyond domain state. This includes:
-- UI-specific state (e.g., which card is selected, animation state)
-- Features outside the domain scope (undo/redo history, order-violations detection, auto-build features)
-- The domain model remains pure; application orchestrates domain operations plus these extra features
+- Repo includes `.github/lsp.json` for TypeScript language-server start options. If using workspace LSP, prefer `npx typescript-language-server --stdio` as configured.
 
-### Shared Code
+---
 
-`src/shared/domain/` contains reusable domain classes:
-- `Card`, `CardValue`, `CardSuit`
-- `Deck` (full 52-card deck or short 36-card deck)
-- Base classes and utilities
+## What Copilot sessions should do first
 
-`src/shared/ui-{framework}/` has shared UI utilities for each framework.
+- Run `npm install` then `npm test` to verify baseline.
+- Use `npm run build` and open `wwwroot/index.html` for quick manual smoke.
+- For code navigation: open `src/shared/domain/`, `src/{game}/application/` and `src/{game}/domain/` to understand move-flow and event usage.
 
-### Data Flow Example
+---
 
-A drag-and-drop move (Besieged Fortress):
-1. User drags card on UI
-2. UI asks `GameService.canMove(card)` → Application → Domain
-3. User drops; UI asks `GameService.canMoveCardToStack(card, stack)` → Domain
-4. Domain returns true/false; Application publishes `CardMovedEvent`
-5. UI listens to event and animates/redraws accordingly
-
-## Key Conventions
-
-### TypeScript & Linting Rules
-
-- **Interfaces**: PascalCase with `I` prefix (e.g., `IGameState`)
-- **Type parameters**: PascalCase with `T` prefix (e.g., `<TCard>`)
-- **Member ordering**: Static fields → instance fields → constructors → static methods → instance methods (enforced by ESLint)
-- **Functions**: Must have explicit return types (e.g., `private getName(): string`)
-- **Members**: Must have explicit accessibility (public/private/protected)
-- **Type assertions**: Use `as` syntax, not angle brackets (except in interfaces)
-- **Unused parameters**: Prefix with `_` if intentionally unused (e.g., `_event`)
-- **Enums**: Use named enums, always initialize members
-- **Booleans**: Use strict boolean expressions (no truthy/falsy coercion)
-- **Nullish coalescing**: Prefer `??` over `||` for null checks
-- **Arrays**: Use `Type[]` syntax, not `Array<Type>`
-
-### Testing Patterns
-
-- Test files: `{ClassName}.spec.ts` alongside or in `tests/{layer}/`
-- Use `chai` for assertions
-- Test builders like `DeckBuilder` in `tests/utils.ts` for setup
-- Random test utilities in `tests/utils.ts` (e.g., `random.getRandomSuit()`)
-- Override ESLint rules in `*.spec.ts` if needed (see `.eslintrc.json`)
-
-### File Structure
-
-Games are isolated under `src/{gameName}/`:
-- `domain/`: Game logic
-- `application/`: `GameService` (main API)
-- `ui-jquery/` or `ui-react/`: UI implementation
-
-Each game shares domain concepts but is independently implemented.
-
-### Event System
-
-Domain events (in `domain/events/`) are published by the domain and consumed by the application, which then publishes them to the UI. Example: `CardMovedEvent` is emitted when a card moves, allowing UI to react without tight coupling.
-
-## Running the Applications
-
-To test locally, open `wwwroot/index.html` in a browser after running `npm run build`. The HTML file contains links to both games.
-
-**Besieged Fortress:**
-- Uses jQuery UI with drag-and-drop interaction
-- 36-card deck
-- Goal: place all cards on bases (Aces through Kings) of the same suit
-- Double-click to auto-move to foundation
-
-**Bisley:**
-- Uses React with click-based selection
-- 52-card deck
-- Goal: complete ace and king foundations by suit
-- Click a card to select, then click destination (another card or empty column)
-- Double-click to auto-move to foundation
-
-## Project Setup
-
-- **TypeScript**: ES5 target, CommonJS modules, strict null checks
-- **Bundler**: Webpack (webpack.config.js defines entry points for each game)
-- **Styles**: Sass files in `styles/{game}/` compiled to CSS
-- **Test runner**: Vitest for TypeScript execution
+If any of these commands differ from local environment, check `package.json`, `vitest.config.ts` and `webpack.config.js` before proceeding.
